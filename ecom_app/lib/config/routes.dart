@@ -1,4 +1,4 @@
-import 'package:ecom_app/features/home/home_presentation/ecom_home_screen.dart';
+import 'package:ecom_app/features/home/home_presentation/home_pages/ecom_home_screen.dart';
 import 'package:ecom_app/features/onBoarding/on_boarding_presentation/onBoarding_pages/on_boarding_screen.dart';
 import 'package:flutter/material.dart';
 
