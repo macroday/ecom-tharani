@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-        designSize: const Size(360, 690), // Adjust this to match your design
+        designSize: const Size(360, 690),
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (_, child) {
@@ -25,13 +25,12 @@ class MyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: const [
-              Locale('en', 'US'), // Add other supported locales if needed
+              Locale('en', 'US'),
             ],
             title: 'Mini E-Commerce',
             theme: ThemeData(
               primarySwatch: Colors.orange,
-              fontFamily:
-                  'montserrat', // Ensure you added Google Fonts in pubspec.yaml
+              fontFamily: 'montserrat',
             ),
 
             //================== App Routes =================

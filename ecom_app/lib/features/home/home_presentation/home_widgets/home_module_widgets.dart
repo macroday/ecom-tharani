@@ -1,6 +1,8 @@
 import 'package:ecom_app/core/utils/ecom_icon_template.dart';
+import 'package:ecom_app/features/home/home_bloc/home_api_bloc/home_api_state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -183,71 +185,106 @@ class HomeModuleWidgets {
   }
 
   Widget homeProductList() {
-    return GridView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.r),
-      itemCount: 4,
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.7,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-      ),
-      itemBuilder: (context, index) {
-        return Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.w),
-              border: Border.all(color: Colors.black.withOpacity(0.12)),
-              color: Colors.white),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 10.h,
+    return BlocBuilder<HomeApiBloc, HomeApiState>(
+      builder: (context, state) {
+        if (state is HomeApiInitial) {
+          context
+              .read<HomeApiBloc>()
+              .add(FetchHomePageProducts(limit: 6, page: 1));
+        } else if (state is HomeApiLoading) {
+          Future.delayed(const Duration(milliseconds: 300));
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is HomeApiError) {
+          print('----------------ERROR-------------------');
+        } else if (state is HomeApiLoaded) {
+          return NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              if (notification is ScrollEndNotification &&
+                  notification.metrics.pixels ==
+                      notification.metrics.maxScrollExtent) {
+                if (!state.hasReachedMax) {
+                  context.read<HomeApiBloc>().add(FetchHomePageProducts(
+                      limit: 2, page: state.currentPage + 1));
+                }
+              }
+              return false;
+            },
+            child: GridView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 16.r),
+              itemCount: state.products.length,
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.7,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
-              SizedBox(
-                width: 130.w,
-                height: 120.h,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.w),
-                  child: Image.asset('assets/images/mens_wear.jpg',
-                      fit: BoxFit.cover),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0.r),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Reebok',
-                        style: GoogleFonts.montserrat(color: Colors.grey)),
-                    Text('Product Name',
-                        style: GoogleFonts.montserrat(
-                            fontWeight: FontWeight.bold)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
+              itemBuilder: (context, index) {
+                final product = state.products[index];
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.w),
+                    border: Border.all(color: Colors.black.withOpacity(0.12)),
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10.h),
+                      SizedBox(
+                        width: 130.w,
+                        height: 120.h,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.w),
+                          child: Image.network(
+                            product.image,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.error, color: Colors.red),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0.r),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.star, color: Colors.orange, size: 16.sp),
-                            Text(
-                              '4.8 (292)',
-                              style:
-                                  GoogleFonts.montserrat(color: Colors.black),
+                            Text('Reebok',
+                                style:
+                                    GoogleFonts.montserrat(color: Colors.grey)),
+                            Text(product.title,
+                                style: GoogleFonts.montserrat(
+                                    fontWeight: FontWeight.bold)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.star,
+                                        color: Colors.orange, size: 16.sp),
+                                    Text(
+                                      '4.8 (292)',
+                                      style: GoogleFonts.montserrat(
+                                          color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                                Text('\$${product.price}',
+                                    style: GoogleFonts.montserrat(
+                                        fontWeight: FontWeight.bold)),
+                              ],
                             ),
                           ],
                         ),
-                        Text('\$499',
-                            style: GoogleFonts.montserrat(
-                                fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        }
+        return const Center(child: Text('No products available'));
       },
     );
   }

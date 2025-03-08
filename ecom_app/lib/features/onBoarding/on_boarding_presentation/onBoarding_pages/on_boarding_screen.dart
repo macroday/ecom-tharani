@@ -89,12 +89,13 @@ Widget _buildImageCollage() {
               return StaggeredGridView.countBuilder(
                 controller: scrollController, // Attach controller
                 crossAxisCount: 3,
-                itemCount: imageList.length * 10,
+                itemCount: EcomConstants.imageList.length * 10,
                 padding: EdgeInsets.symmetric(horizontal: 0.w),
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
                 itemBuilder: (context, index) {
-                  return _buildImage(imageList[index % imageList.length]);
+                  return _buildImage(EcomConstants
+                      .imageList[index % EcomConstants.imageList.length]);
                 },
                 staggeredTileBuilder: (int index) => StaggeredTile.count(
                     (index % 17 == 0) ? 3 : 1, (index % 2 == 0) ? 1 : 3),

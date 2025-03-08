@@ -5,7 +5,8 @@ class GetHomeUseCase {
   final HomeRepository _homeRepository;
   GetHomeUseCase(this._homeRepository);
 
-  Future<List<HomeModel>> call({required int page, required int limit}) {
-    return _homeRepository.fetchHomePageProducts(page, limit);
+  Future<List<HomeModel>> call({required int limit, required int page}) {
+    print('Calling UseCase...');
+    return _homeRepository.fetchHomePageProducts(limit: limit, page: page);
   }
 }
