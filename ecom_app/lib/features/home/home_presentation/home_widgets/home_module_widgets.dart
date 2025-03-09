@@ -203,6 +203,9 @@ class HomeModuleWidgets {
                   notification.metrics.pixels ==
                       notification.metrics.maxScrollExtent) {
                 if (!state.hasReachedMax) {
+                  print('End reached');
+                  print('Current Page: ${state.currentPage}');
+                  print('Has Reached Max: ${state.hasReachedMax}');
                   context.read<HomeApiBloc>().add(FetchHomePageProducts(
                       limit: 2, page: state.currentPage + 1));
                 }
@@ -231,47 +234,60 @@ class HomeModuleWidgets {
                   child: Column(
                     children: [
                       SizedBox(height: 10.h),
-                      SizedBox(
-                        width: 130.w,
-                        height: 120.h,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12.w),
-                          child: Image.network(
-                            product.image,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(Icons.error, color: Colors.red),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12.w),
+                        child: Container(
+                          width: 140.w,
+                          height: 120.h,
+                          color: const Color.fromARGB(255, 234, 163, 56),
+                          padding: EdgeInsets.all(5.r),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.w),
+                            child: Image.network(
+                              product.image,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.error, color: Colors.red),
+                            ),
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8.0.r),
+                        padding: EdgeInsets.only(
+                            left: 8.w, right: 8.w, top: 8.w, bottom: 0.w),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Reebok',
                                 style:
                                     GoogleFonts.montserrat(color: Colors.grey)),
-                            Text(product.title,
-                                style: GoogleFonts.montserrat(
-                                    fontWeight: FontWeight.bold)),
+                            Text(
+                              product.title,
+                              style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12.sp,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
                                   children: [
                                     Icon(Icons.star,
-                                        color: Colors.orange, size: 16.sp),
+                                        color: Colors.orange, size: 12.sp),
                                     Text(
-                                      '4.8 (292)',
+                                      '${product.rating.rate} (${product.rating.count})',
                                       style: GoogleFonts.montserrat(
-                                          color: Colors.black),
+                                          color: Colors.black, fontSize: 12.sp),
                                     ),
                                   ],
                                 ),
                                 Text('\$${product.price}',
                                     style: GoogleFonts.montserrat(
-                                        fontWeight: FontWeight.bold)),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12.sp)),
                               ],
                             ),
                           ],
