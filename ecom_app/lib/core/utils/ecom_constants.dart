@@ -21,4 +21,6 @@ class EcomConstants {
   ];
 
   static const ecomApiUrl = 'https://fakestoreapi.com/products';
+  static const ecomHomePath = '/home';
+  static const ecomProductPath = '/product';
 }

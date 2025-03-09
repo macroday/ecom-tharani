@@ -1,8 +1,10 @@
+import 'package:ecom_app/config/routes.dart';
 import 'package:ecom_app/core/utils/ecom_icon_template.dart';
 import 'package:ecom_app/features/home/home_bloc/home_api_bloc/home_api_state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -225,75 +227,85 @@ class HomeModuleWidgets {
               ),
               itemBuilder: (context, index) {
                 final product = state.products[index];
-                return Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.w),
-                    border: Border.all(color: Colors.black.withOpacity(0.12)),
-                    color: Colors.white,
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 10.h),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12.w),
-                        child: Container(
-                          width: 140.w,
-                          height: 120.h,
-                          color: const Color.fromARGB(255, 234, 163, 56),
-                          padding: EdgeInsets.all(5.r),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.w),
-                            child: Image.network(
-                              product.image,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.error, color: Colors.red),
+                return Bounceable(
+                  scaleFactor: 0.7,
+                  onTap: () {
+                    Future.delayed(Duration(milliseconds: 300), () {
+                      Navigator.pushNamed(context, AppRoutes.productDetail);
+                    });
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.w),
+                      border: Border.all(color: Colors.black.withOpacity(0.12)),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 10.h),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12.w),
+                          child: Container(
+                            width: 140.w,
+                            height: 120.h,
+                            color: const Color.fromARGB(255, 234, 163, 56),
+                            padding: EdgeInsets.all(5.r),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12.w),
+                              child: Image.network(
+                                product.image,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.error, color: Colors.red),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 8.w, right: 8.w, top: 8.w, bottom: 0.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Reebok',
-                                style:
-                                    GoogleFonts.montserrat(color: Colors.grey)),
-                            Text(
-                              product.title,
-                              style: GoogleFonts.montserrat(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12.sp,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.star,
-                                        color: Colors.orange, size: 12.sp),
-                                    Text(
-                                      '${product.rating.rate} (${product.rating.count})',
-                                      style: GoogleFonts.montserrat(
-                                          color: Colors.black, fontSize: 12.sp),
-                                    ),
-                                  ],
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 8.w, right: 8.w, top: 8.w, bottom: 0.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Reebok',
+                                  style: GoogleFonts.montserrat(
+                                      color: Colors.grey)),
+                              Text(
+                                product.title,
+                                style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12.sp,
                                 ),
-                                Text('\$${product.price}',
-                                    style: GoogleFonts.montserrat(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12.sp)),
-                              ],
-                            ),
-                          ],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(Icons.star,
+                                          color: Colors.orange, size: 12.sp),
+                                      Text(
+                                        '${product.rating.rate} (${product.rating.count})',
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.black,
+                                            fontSize: 12.sp),
+                                      ),
+                                    ],
+                                  ),
+                                  Text('\$${product.price}',
+                                      style: GoogleFonts.montserrat(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12.sp)),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },

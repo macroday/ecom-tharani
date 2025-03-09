@@ -39,6 +39,7 @@ dependencies:
   shimmer: ^3.0.0 
   google_fonts: ^6.0.0
   flutter_localization: ^0.1.13
+  flutter_bounceable: ^1.1.0
 
   # State Management
   equatable: ^2.0.5
