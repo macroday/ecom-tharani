@@ -1,4 +1,5 @@
 import 'package:ecom_app/config/routes.dart';
+import 'package:ecom_app/core/utils/ecom_constants.dart';
 import 'package:ecom_app/core/utils/ecom_icon_template.dart';
 import 'package:ecom_app/features/home/home_bloc/home_api_bloc/home_api_state_manager.dart';
 import 'package:flutter/material.dart';
@@ -218,8 +219,13 @@ class HomeModuleWidgets {
               return Bounceable(
                 scaleFactor: 0.7,
                 onTap: () {
-                  Future.delayed(Duration(milliseconds: 300), () {
-                    Navigator.pushNamed(context, AppRoutes.productDetail);
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    Navigator.pushNamed(context, AppRoutes.productDetail,
+                        arguments: EcomBundle(
+                            imageUrl: product.image,
+                            title: product.title,
+                            description: product.description,
+                            price: product.price));
                   });
                 },
                 child: Container(
@@ -236,13 +242,15 @@ class HomeModuleWidgets {
                         child: Container(
                           width: 140.w,
                           height: 120.h,
-                          color: const Color.fromARGB(255, 234, 163, 56),
                           padding: EdgeInsets.all(5.r),
-                          child: Image.network(
-                            product.image,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(Icons.error, color: Colors.red),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.w),
+                            child: Image.network(
+                              product.image,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.error, color: Colors.red),
+                            ),
                           ),
                         ),
                       ),

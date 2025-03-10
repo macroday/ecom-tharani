@@ -1,7 +1,7 @@
 import 'package:ecom_app/core/utils/ecom_constants.dart';
 import 'package:ecom_app/features/home/home_presentation/home_pages/ecom_home_screen.dart';
 import 'package:ecom_app/features/onBoarding/on_boarding_presentation/onBoarding_pages/on_boarding_screen.dart';
-import 'package:ecom_app/features/product/product_presentation/product_detail_screen.dart';
+import 'package:ecom_app/features/product/product_presentation/product_detail_pages/product_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 //=============================== Handles Navigation ===================================
@@ -17,7 +17,11 @@ class AppRoutes {
       case home:
         return MaterialPageRoute(builder: (_) => const EcomHomePage());
       case productDetail:
-        return MaterialPageRoute(builder: (_) => const ProductDetailPage());
+        final bundle = routeSettings.arguments as EcomBundle;
+        return MaterialPageRoute(
+            builder: (_) => ProductDetailPage(
+                  ecomBundle: bundle,
+                ));
       default:
         return MaterialPageRoute(
             builder: (_) => const Scaffold(
