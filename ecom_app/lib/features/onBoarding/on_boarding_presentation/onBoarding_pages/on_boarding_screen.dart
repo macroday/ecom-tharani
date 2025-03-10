@@ -40,9 +40,9 @@ Widget getOnBoardingScreen(BuildContext context, Size size) {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.white.withOpacity(0.91), // Transparent at top
-                      Colors.white, // Almost white
-                      Colors.white, // Fully white at bottom
+                      Colors.white.withOpacity(0.91),
+                      Colors.white,
+                      Colors.white,
                     ],
                   ),
                 ),
@@ -82,12 +82,12 @@ Widget _buildImageCollage() {
         child: Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()
-            ..rotateZ(0.18) // Adjust rotation for slight tilt
+            ..rotateZ(0.18)
             ..translate(-25.w, -30.h),
           child: BlocBuilder<ImageCollageCubit, ScrollController>(
             builder: (context, scrollController) {
               return StaggeredGridView.countBuilder(
-                controller: scrollController, // Attach controller
+                controller: scrollController,
                 crossAxisCount: 3,
                 itemCount: EcomConstants.imageList.length * 10,
                 padding: EdgeInsets.symmetric(horizontal: 0.w),
@@ -197,7 +197,6 @@ Widget _buildGetStartedButton(BuildContext context) {
         ),
         child: Stack(
           children: [
-            // Draggable Button
             Positioned(
               left: state.position,
               top: 5,
@@ -227,7 +226,6 @@ Widget _buildGetStartedButton(BuildContext context) {
                 ),
               ),
             ),
-
             Align(
               alignment: Alignment.centerRight,
               child: Row(

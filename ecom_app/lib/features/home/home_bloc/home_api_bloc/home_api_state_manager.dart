@@ -1,6 +1,7 @@
 import 'package:ecom_app/features/home/home_data/home_model.dart';
 import 'package:ecom_app/features/home/home_domain/home_usecase.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 //
@@ -64,41 +65,58 @@ class HomeApiBloc extends Bloc<HomeApiEvent, HomeApiState> {
 
   Future<void> _onFetchHomePageProducts(
       FetchHomePageProducts event, Emitter<HomeApiState> emit) async {
-    print('************* _onFetchHomePageProducts CALLED *************');
+    debugPrint('************* _onFetchHomePageProducts CALLED *************');
+
+    List<HomeModel> currentProducts = [];
+    int nextPage = 1;
 
     if (state is HomeApiLoaded) {
-      print('************* HOMEAPI LOADED *************');
+      debugPrint('************* HOMEAPI LOADED *************');
       final currentState = state as HomeApiLoaded;
+
       if (currentState.hasReachedMax) {
+        debugPrint('************* REACHED MAX - NO MORE DATA *************');
         return;
       }
+
+      currentProducts = List.from(currentState.products);
+      nextPage = currentState.currentPage + 1;
     }
 
     try {
       if (state is HomeApiInitial) {
-        print('************* HOMEAPI INITIAL *************');
+        debugPrint('************* HOMEAPI INITIAL *************');
         emit(HomeApiLoading());
       }
 
       if (state is HomeApiLoading) {
-        print('************* HOMEAPI LOADING *************');
+        debugPrint('************* HOMEAPI LOADING *************');
       }
-      var products =
-          await _getHomeUseCase(limit: event.limit, page: event.page);
-      print('************* Products Received: *************');
+
+      debugPrint('************* Fetching Page: $nextPage *************');
+      var products = await _getHomeUseCase(limit: event.limit, page: nextPage);
+
+      debugPrint(
+          '************* Products Received: ${products.length} *************');
+
       if (products.isEmpty) {
+        debugPrint('************* NO MORE PRODUCTS AVAILABLE *************');
         emit(HomeApiLoaded(
-            products: [], hasReachedMax: true, currentPage: event.page));
+          products: currentProducts,
+          hasReachedMax: true,
+          currentPage: nextPage,
+        ));
       } else {
-        final List<HomeModel> currentProducts =
-            state is HomeApiLoaded ? (state as HomeApiLoaded).products : [];
+        debugPrint(
+            '************* PRODUCTS ADDED TO EXISTING LIST : ${products as List} *************');
         emit(HomeApiLoaded(
-            products: currentProducts + products,
-            hasReachedMax: products.length < event.limit,
-            currentPage: event.page));
+          products: currentProducts + products,
+          hasReachedMax: products.length < event.limit,
+          currentPage: nextPage,
+        ));
       }
     } catch (error) {
-      print('************* No products available *************');
+      debugPrint('************* ERROR FETCHING PRODUCTS: $error *************');
       emit(HomeApiError(errorMessage: 'Failed to fetch products : $error'));
     }
   }

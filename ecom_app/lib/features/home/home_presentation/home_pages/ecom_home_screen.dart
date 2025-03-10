@@ -40,10 +40,6 @@ class EcomHomeState extends State<EcomHomePage> {
         BlocProvider<HomeApiBloc>(
           create: (context) => HomeApiBloc(context.read<GetHomeUseCase>()),
         ),
-        // BlocProvider<HomeApiBloc>(
-        //   create: (context) => HomeApiBloc(context.read<GetHomeUseCase>())
-        //     ..add(FetchHomePageProducts(pageLimit: 1, limit: 4)),
-        // ),
       ],
       child: BlocBuilder<HomeBloc, int>(builder: (context, selectedIndex) {
         return Scaffold(
@@ -80,7 +76,7 @@ class EcomHomeState extends State<EcomHomePage> {
               curve: Curves.easeInOut,
             );
             context.read<HomeBloc>().updatePageindex(index);
-          }), // Bottom Nav Bar
+          }),
         );
       }),
     );
