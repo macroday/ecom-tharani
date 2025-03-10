@@ -243,41 +243,44 @@ class ProuctDetailWidgets {
   }
 
   Widget bottomButtonRow() {
-    return Row(
-      children: [
-        SizedBox(
-          width: 120.w,
-          height: 35.h,
-          child: OutlinedButton(
-            onPressed: () {},
-            child: Text(
-              'Buy Now',
-              style: GoogleFonts.montserrat(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16.sp),
-            ),
-          ),
-        ),
-        SizedBox(width: 10.0.w),
-        Expanded(
-          child: SizedBox(
+    return Padding(
+      padding: EdgeInsets.only(bottom: 20.r),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 120.w,
             height: 35.h,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 234, 163, 56)),
+            child: OutlinedButton(
               onPressed: () {},
               child: Text(
-                'Add to cart',
+                'Buy Now',
                 style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
                     fontSize: 16.sp),
               ),
             ),
           ),
-        ),
-      ],
+          SizedBox(width: 10.0.w),
+          Expanded(
+            child: SizedBox(
+              height: 35.h,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 234, 163, 56)),
+                onPressed: () {},
+                child: Text(
+                  'Add to cart',
+                  style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16.sp),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
