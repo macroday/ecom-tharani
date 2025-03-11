@@ -1,4 +1,6 @@
 import 'package:ecom_app/core/utils/ecom_constants.dart';
+import 'package:ecom_app/features/cart/cart_presentation/cart_pages/ecom_cart_screen.dart';
+import 'package:ecom_app/features/favorites/favorite_presentation/favorite_pages/ecom_favorite_screen.dart';
 import 'package:ecom_app/features/home/home_presentation/home_pages/ecom_home_screen.dart';
 import 'package:ecom_app/features/onBoarding/on_boarding_presentation/onBoarding_pages/on_boarding_screen.dart';
 import 'package:ecom_app/features/product/product_presentation/product_detail_pages/product_detail_screen.dart';
@@ -10,6 +12,9 @@ class AppRoutes {
   static const String onBoarding = '/';
   static const String home = EcomConstants.ecomHomePath;
   static const String productDetail = EcomConstants.ecomProductPath;
+  // static const String search = EcomConstants.ecomSearchScreenPath;
+  static const String cart = EcomConstants.ecomCartPath;
+  static const String favorites = EcomConstants.ecomFavoritePath;
   static Route<dynamic> navigateToRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case onBoarding:
@@ -22,6 +27,12 @@ class AppRoutes {
             builder: (_) => ProductDetailPage(
                   ecomBundle: bundle,
                 ));
+      // case search:
+      //   return MaterialPageRoute(builder: (_) => const EcomHomePage());
+      case cart:
+        return MaterialPageRoute(builder: (_) => const EcomCartPage());
+      case favorites:
+        return MaterialPageRoute(builder: (_) => const EcomFavoritesPage());
       default:
         return MaterialPageRoute(
             builder: (_) => const Scaffold(

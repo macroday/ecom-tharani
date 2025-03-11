@@ -4,6 +4,7 @@ class HomeModel {
   final String image;
   final double price;
   final String description;
+  final String category;
   final Rating rating;
   HomeModel(
       {required this.id,
@@ -11,6 +12,7 @@ class HomeModel {
       required this.image,
       required this.price,
       required this.description,
+      required this.category,
       required this.rating});
   factory HomeModel.fromJson(Map<String, dynamic> json) {
     return HomeModel(
@@ -19,6 +21,7 @@ class HomeModel {
         image: json['image'],
         price: json['price'].toDouble(),
         description: json['description'],
+        category: json['category'],
         rating: Rating.fromJson(json['rating']));
   }
 }

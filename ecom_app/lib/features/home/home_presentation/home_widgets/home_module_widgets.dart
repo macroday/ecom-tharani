@@ -2,6 +2,8 @@ import 'package:ecom_app/config/routes.dart';
 import 'package:ecom_app/core/utils/ecom_constants.dart';
 import 'package:ecom_app/core/utils/ecom_icon_template.dart';
 import 'package:ecom_app/features/home/home_bloc/home_api_bloc/home_api_state_manager.dart';
+import 'package:ecom_app/features/home/home_bloc/home_ui_bloc/module_home_bloc.dart';
+import 'package:ecom_app/features/product/product_bloc/product_detail_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -318,7 +320,8 @@ class HomeModuleWidgets {
   //
   //======================= Search Bar Row ========================
   //
-  Widget homeSearchBar(BuildContext context) {
+  Widget homeSearchBar(BuildContext context, FocusNode searchFocus,
+      VoidCallback onTextFieldTap) {
     return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -332,6 +335,10 @@ class HomeModuleWidgets {
             child: SizedBox(
               height: double.infinity,
               child: TextField(
+                focusNode: searchFocus,
+                onTap: () {
+                  onTextFieldTap();
+                },
                 decoration: InputDecoration(
                   hintText: 'Search...',
                   prefixIcon: Icon(
@@ -357,8 +364,14 @@ class HomeModuleWidgets {
               ),
             ),
           ),
-          AppWidgets.appIconTemplate(context, 0, 3.5, 15, 0, 45, 40, 25,
-              Colors.grey.withOpacity(0.2), Colors.black, Icons.tune, 50)
+          Bounceable(
+            scaleFactor: 0.6,
+            onTap: () {
+              showFilterBottomSheet(context);
+            },
+            child: AppWidgets.appIconTemplate(context, 0, 3.5, 15, 0, 45, 40,
+                25, Colors.grey.withOpacity(0.2), Colors.black, Icons.tune, 50),
+          )
         ]);
   }
 
@@ -380,4 +393,204 @@ class HomeModuleWidgets {
       ),
     );
   }
+
+  //
+  //========================== Filter Screen ===========================
+  //
+  void showFilterBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0.w)),
+      ),
+      builder: (context) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<SizeSelectionBloc>(
+                create: (context) => SizeSelectionBloc()),
+            BlocProvider<SliderValueCubit>(
+                create: (context) => SliderValueCubit())
+          ],
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Padding(
+              padding: EdgeInsets.only(
+                  left: 16.r, right: 16.r, bottom: 20.r, top: 5.r),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40.w,
+                        height: 5.h,
+                        margin: EdgeInsets.symmetric(vertical: 8.h),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(12.w),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Text(
+                      'Product Name',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 14.sp,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _buildTextField('Product Name', 'eg. Shirt'),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Text(
+                      'Product Code',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 14.sp,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _buildTextField('Product Code', 'eg. SKU243'),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Text(
+                      'Brand',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 14.sp,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _buildTextField('Brand', 'eg. H&M'),
+                    SizedBox(height: 10.h),
+                    Text('Price Range',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    BlocBuilder<SliderValueCubit, double>(
+                        builder: (context, value) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                              child: Slider(
+                            value: value,
+                            min: 0,
+                            max: 500,
+                            activeColor:
+                                const Color.fromARGB(255, 234, 163, 56),
+                            inactiveColor: Colors.grey.shade300,
+                            onChanged: (value) {
+                              context
+                                  .read<SliderValueCubit>()
+                                  .updateSliderValue(value);
+                            },
+                          )),
+                          Text('\$${value.toStringAsFixed(2)}'),
+                        ],
+                      );
+                    }),
+                    SizedBox(height: 10.h),
+                    Text('Select Size',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    BlocBuilder<SizeSelectionBloc, SizeSelectionState>(
+                        builder: (context, state) {
+                      return _buildSizeSelection(context, state);
+                    }),
+                    SizedBox(height: 10.h),
+                    Text('Color',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    _buildColorSelection(),
+                    SizedBox(height: 10.h),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+Widget _buildTextField(String label, String hint) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: TextField(
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        filled: true,
+        fillColor: Colors.grey.shade200,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildSizeSelection(BuildContext context, SizeSelectionState state) {
+  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+  return Row(
+    children: sizes.map((size) {
+      return Padding(
+        padding: EdgeInsets.only(right: 8.r),
+        child: Bounceable(
+          scaleFactor: 0.6,
+          onTap: () {
+            context
+                .read<SizeSelectionBloc>()
+                .add(SizeSelectionEvent(sizeIndex: sizes.indexOf(size)));
+          },
+          child: Container(
+            width: 40.w,
+            height: 30.h,
+            decoration: BoxDecoration(
+                color: state.sizeIndex == sizes.indexOf(size)
+                    ? const Color.fromARGB(255, 234, 163, 56)
+                    : Colors.transparent,
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(10.w)),
+            child: Center(
+              child: Text(
+                size,
+                style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+        ),
+      );
+    }).toList(),
+  );
+}
+
+Widget _buildColorSelection() {
+  const colors = [Colors.blue, Colors.green, Colors.grey, Colors.brown];
+  return Wrap(
+    spacing: 8,
+    children: colors.map((color) {
+      return CircleAvatar(
+        backgroundColor: color,
+        radius: 12,
+      );
+    }).toList(),
+  );
 }

@@ -113,3 +113,13 @@ class ProductQuantityBloc
     });
   }
 }
+
+//
+//====================== Product Description Cubit ======================
+//
+
+class DescriptionCubit extends Cubit<bool> {
+  DescriptionCubit() : super(true);
+
+  void toggleDescription() => emit(!state);
+}

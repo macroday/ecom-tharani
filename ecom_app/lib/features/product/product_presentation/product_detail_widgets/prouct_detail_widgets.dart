@@ -1,4 +1,5 @@
 import 'package:ecom_app/features/product/product_bloc/product_detail_bloc.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -11,7 +12,7 @@ class ProuctDetailWidgets {
       children: [
         Container(
           width: width,
-          height: 300.h,
+          height: 250.h,
           margin: EdgeInsets.symmetric(horizontal: 10.w),
           decoration: BoxDecoration(
               border: Border.all(
@@ -244,7 +245,7 @@ class ProuctDetailWidgets {
 
   Widget bottomButtonRow() {
     return Padding(
-      padding: EdgeInsets.only(bottom: 20.r),
+      padding: EdgeInsets.only(bottom: 15.r),
       child: Row(
         children: [
           SizedBox(
@@ -285,11 +286,35 @@ class ProuctDetailWidgets {
   }
 
   Widget productDescription(String description) {
-    return Text(
-      description,
-      style: GoogleFonts.montserrat(color: Colors.black, fontSize: 14.sp),
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
+    return BlocBuilder<DescriptionCubit, bool>(
+      builder: (context, isFirstHalfVisible) {
+        final midPoint = (description.length / 2).round();
+        final firstHalf = description.substring(0, midPoint);
+        final secondHalf = description.substring(midPoint);
+
+        return RichText(
+          text: TextSpan(
+            text: isFirstHalfVisible ? firstHalf : secondHalf,
+            style: GoogleFonts.montserrat(
+              color: Colors.black,
+              fontSize: 14.sp,
+            ),
+            children: [
+              TextSpan(
+                text: isFirstHalfVisible ? '... Show More' : ' Show Less',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10.sp,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () =>
+                      context.read<DescriptionCubit>().toggleDescription(),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

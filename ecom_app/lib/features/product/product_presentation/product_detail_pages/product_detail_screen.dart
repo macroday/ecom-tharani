@@ -27,6 +27,7 @@ class ProductDetailState extends State<ProductDetailPage> {
         BlocProvider(create: (_) => ImageSuggestionBloc()),
         BlocProvider(create: (_) => SizeSelectionBloc()),
         BlocProvider(create: (_) => ProductQuantityBloc()),
+        BlocProvider(create: (_) => DescriptionCubit()),
       ],
       child: Scaffold(
         body: SafeArea(
@@ -106,10 +107,11 @@ class ProductDetailState extends State<ProductDetailPage> {
                   style:
                       TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8.h),
-                ProuctDetailWidgets()
-                    .productDescription(widget.ecomBundle.description),
-                const Spacer(),
+                SizedBox(height: 5.h),
+                ProuctDetailWidgets().productDescription(
+                  widget.ecomBundle.description,
+                ),
+                Spacer(),
                 ProuctDetailWidgets().bottomButtonRow(),
               ],
             ),

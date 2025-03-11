@@ -23,6 +23,9 @@ class EcomConstants {
   static const ecomApiUrl = 'https://fakestoreapi.com/products';
   static const ecomHomePath = '/home';
   static const ecomProductPath = '/product';
+  static const ecomCartPath = '/cart';
+  static const ecomFavoritePath = '/favorites';
+  // static const ecomSearchScreenPath = '/search';
 }
 
 class EcomBundle {
