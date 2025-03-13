@@ -1,9 +1,10 @@
 import 'package:ecom_app/config/routes.dart';
 import 'package:ecom_app/core/utils/ecom_constants.dart';
-import 'package:ecom_app/core/utils/ecom_icon_template.dart';
+import 'package:ecom_app/core/utils/ecom_common_widgets.dart';
 import 'package:ecom_app/features/home/home_bloc/home_api_bloc/home_api_state_manager.dart';
 import 'package:ecom_app/features/home/home_bloc/home_ui_bloc/module_home_bloc.dart';
 import 'package:ecom_app/features/product/product_bloc/product_detail_bloc.dart';
+import 'package:ecom_app/features/search/search_bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -218,88 +219,69 @@ class HomeModuleWidgets {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               final product = state.products[index];
-              return Bounceable(
-                scaleFactor: 0.7,
-                onTap: () {
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    Navigator.pushNamed(context, AppRoutes.productDetail,
-                        arguments: EcomBundle(
-                            imageUrl: product.image,
-                            title: product.title,
-                            description: product.description,
-                            price: product.price));
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.w),
-                    border: Border.all(color: Colors.black.withOpacity(0.12)),
-                    color: Colors.white,
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 10.h),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12.w),
+              return BlocBuilder<LikeValueCubit, Map<int, bool>>(
+                  builder: (context, likeValue) {
+                final bool islikeValue = likeValue[product.id] ?? false;
+                return Bounceable(
+                  scaleFactor: 0.7,
+                  onTap: () {
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      Navigator.pushNamed(context, AppRoutes.productDetail,
+                          arguments: EcomBundle(
+                              imageUrl: product.image,
+                              title: product.title,
+                              description: product.description,
+                              price: product.price));
+                    });
+                  },
+                  child: Stack(children: [
+                    AppWidgets.productItemWidget(
+                        product.image,
+                        product.title,
+                        product.rating.rate,
+                        product.rating.count,
+                        product.price),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Bounceable(
+                        scaleFactor: 0.6,
+                        onTap: () {
+                          context
+                              .read<LikeValueCubit>()
+                              .updateLikeValue(product.id);
+                          if (!islikeValue) {
+                            EcomConstants.ecomFavoriteList.add(product);
+                          } else if (EcomConstants
+                              .ecomFavoriteList.isNotEmpty) {
+                            EcomConstants.ecomFavoriteList.remove(product);
+                          }
+                        },
                         child: Container(
-                          width: 140.w,
-                          height: 120.h,
-                          padding: EdgeInsets.all(5.r),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.w),
-                            child: Image.network(
-                              product.image,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.error, color: Colors.red),
+                          padding: EdgeInsets.all(2.r),
+                          width: 30.w,
+                          height: 30.h,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.black.withOpacity(0.5),
                             ),
+                            shape: BoxShape.circle,
                           ),
+                          child: Center(
+                              child: Icon(
+                            !islikeValue
+                                ? Icons.favorite_border_outlined
+                                : Icons.favorite,
+                            color: Colors.red,
+                            size: 18.sp,
+                          )),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Reebok',
-                                style:
-                                    GoogleFonts.montserrat(color: Colors.grey)),
-                            Text(
-                              product.title,
-                              style: GoogleFonts.montserrat(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12.sp,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.star,
-                                        color: Colors.orange, size: 12.sp),
-                                    Text(
-                                      '${product.rating.rate} (${product.rating.count})',
-                                      style: GoogleFonts.montserrat(
-                                          color: Colors.black, fontSize: 12.sp),
-                                    ),
-                                  ],
-                                ),
-                                Text('\$${product.price}',
-                                    style: GoogleFonts.montserrat(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12.sp)),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
+                    )
+                  ]),
+                );
+              });
             },
             childCount: state.products.length,
           ),
@@ -321,7 +303,7 @@ class HomeModuleWidgets {
   //======================= Search Bar Row ========================
   //
   Widget homeSearchBar(BuildContext context, FocusNode searchFocus,
-      VoidCallback onTextFieldTap) {
+      PageController pageController, VoidCallback onTextFieldTap) {
     return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -338,6 +320,15 @@ class HomeModuleWidgets {
                 focusNode: searchFocus,
                 onTap: () {
                   onTextFieldTap();
+                },
+                onChanged: (value) {
+                  pageController.animateToPage(1,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut);
+                  context.read<HomeBloc>().updatePageindex(1);
+                  context
+                      .read<SearchBloc>()
+                      .add(SearchTextChanged(text: value));
                 },
                 decoration: InputDecoration(
                   hintText: 'Search...',

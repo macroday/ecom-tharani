@@ -1,6 +1,6 @@
 import 'package:ecom_app/config/routes.dart';
 import 'package:ecom_app/core/utils/ecom_constants.dart';
-import 'package:ecom_app/features/onBoarding/on_boarding_presentation/onBoarding_bloc/get_started_drag_bloc.dart';
+import 'package:ecom_app/features/onBoarding/onBoarding_bloc/get_started_drag_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

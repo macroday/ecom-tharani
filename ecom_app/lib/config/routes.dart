@@ -12,7 +12,6 @@ class AppRoutes {
   static const String onBoarding = '/';
   static const String home = EcomConstants.ecomHomePath;
   static const String productDetail = EcomConstants.ecomProductPath;
-  // static const String search = EcomConstants.ecomSearchScreenPath;
   static const String cart = EcomConstants.ecomCartPath;
   static const String favorites = EcomConstants.ecomFavoritePath;
   static Route<dynamic> navigateToRoute(RouteSettings routeSettings) {
@@ -27,8 +26,6 @@ class AppRoutes {
             builder: (_) => ProductDetailPage(
                   ecomBundle: bundle,
                 ));
-      // case search:
-      //   return MaterialPageRoute(builder: (_) => const EcomHomePage());
       case cart:
         return MaterialPageRoute(builder: (_) => const EcomCartPage());
       case favorites:

@@ -24,6 +24,7 @@ class HomeRepositoryImpl extends HomeRepository {
         final allProducts = (response.data as List)
             .map((jsonData) => HomeModel.fromJson(jsonData))
             .toList();
+        EcomConstants.ecomProductList = allProducts;
         final startIndex = (page - 1) * limit;
         final endIndex = startIndex + limit;
 

@@ -1,3 +1,5 @@
+import 'package:ecom_app/features/home/home_data/home_model.dart';
+
 class EcomConstants {
   static const imageList = [
     'assets/images/mens_wear.jpg',
@@ -26,6 +28,12 @@ class EcomConstants {
   static const ecomCartPath = '/cart';
   static const ecomFavoritePath = '/favorites';
   // static const ecomSearchScreenPath = '/search';
+  static List<HomeModel> ecomProductList = [];
+  static List<HomeModel> ecomFavoriteList = [];
+  static const searchCategories = [
+    'Men\'s Clothing',
+    'Women\'s Clothing',
+  ];
 }
 
 class EcomBundle {

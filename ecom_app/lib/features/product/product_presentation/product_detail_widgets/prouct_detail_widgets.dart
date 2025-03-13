@@ -12,7 +12,7 @@ class ProuctDetailWidgets {
       children: [
         Container(
           width: width,
-          height: 250.h,
+          height: 300.h,
           margin: EdgeInsets.symmetric(horizontal: 10.w),
           decoration: BoxDecoration(
               border: Border.all(
@@ -244,44 +244,41 @@ class ProuctDetailWidgets {
   }
 
   Widget bottomButtonRow() {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 15.r),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 120.w,
-            height: 35.h,
-            child: OutlinedButton(
-              onPressed: () {},
-              child: Text(
-                'Buy Now',
-                style: GoogleFonts.montserrat(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16.sp),
-              ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
+          width: 120.w,
+          height: 35.h,
+          child: OutlinedButton(
+            onPressed: () {},
+            child: Text(
+              'Buy Now',
+              style: GoogleFonts.montserrat(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.sp),
             ),
           ),
-          SizedBox(width: 10.0.w),
-          Expanded(
-            child: SizedBox(
-              height: 35.h,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 234, 163, 56)),
-                onPressed: () {},
-                child: Text(
-                  'Add to cart',
-                  style: GoogleFonts.montserrat(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.sp),
-                ),
-              ),
+        ),
+        SizedBox(width: 20.0.w),
+        SizedBox(
+          width: 180.w,
+          height: 35.h,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 234, 163, 56)),
+            onPressed: () {},
+            child: Text(
+              'Add to cart',
+              style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16.sp),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

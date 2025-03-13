@@ -31,89 +31,93 @@ class ProductDetailState extends State<ProductDetailPage> {
       ],
       child: Scaffold(
         body: SafeArea(
-          child: Container(
-            width: size.width,
-            height: size.height,
-            color: Colors.white,
-            padding: EdgeInsets.only(left: 20.w, right: 20.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Bounceable(
-                          scaleFactor: 0.7,
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Container(
-                            width: 35.w,
-                            height: 30.h,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(50.r),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 5.r),
-                              child: Icon(
-                                Icons.arrow_back_ios,
-                                size: 18.sp,
+          child: SingleChildScrollView(
+            child: Container(
+              width: size.width,
+              color: Colors.white,
+              padding: EdgeInsets.only(left: 20.w, right: 20.w),
+              child: Stack(children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Bounceable(
+                              scaleFactor: 0.7,
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                width: 35.w,
+                                height: 30.h,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(50.r),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 5.r),
+                                  child: Icon(
+                                    Icons.arrow_back_ios,
+                                    size: 18.sp,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        Text(
-                          'Detail Product',
-                          style: GoogleFonts.montserrat(
-                              fontWeight: FontWeight.bold, fontSize: 15.sp),
-                        ),
-                        Container(
-                          width: 35.w,
-                          height: 30.h,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(50.r),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 2.r),
-                            child: Icon(
-                              Icons.shopping_cart_outlined,
-                              size: 18.sp,
+                            Text(
+                              'Detail Product',
+                              style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.bold, fontSize: 15.sp),
                             ),
-                          ),
-                        ),
-                      ]),
+                            Container(
+                              width: 35.w,
+                              height: 30.h,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(50.r),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 2.r),
+                                child: Icon(
+                                  Icons.shopping_cart_outlined,
+                                  size: 18.sp,
+                                ),
+                              ),
+                            ),
+                          ]),
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    ProuctDetailWidgets()
+                        .productImage(size.width, widget.ecomBundle.imageUrl),
+                    SizedBox(height: 4.h),
+                    ProuctDetailWidgets().productDetailRow(
+                        widget.ecomBundle.title,
+                        widget.ecomBundle.price.toString()),
+                    Text(
+                      'Select Size',
+                      style: TextStyle(
+                          fontSize: 16.sp, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8.h),
+                    ProuctDetailWidgets().sizeSelectionRow(),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'Description',
+                      style: TextStyle(
+                          fontSize: 16.sp, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 5.h),
+                    ProuctDetailWidgets().productDescription(
+                      widget.ecomBundle.description,
+                    ),
+                    SizedBox(height: 20.h),
+                    ProuctDetailWidgets().bottomButtonRow(),
+                  ],
                 ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                ProuctDetailWidgets()
-                    .productImage(size.width, widget.ecomBundle.imageUrl),
-                SizedBox(height: 4.h),
-                ProuctDetailWidgets().productDetailRow(widget.ecomBundle.title,
-                    widget.ecomBundle.price.toString()),
-                Text(
-                  'Select Size',
-                  style:
-                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8.h),
-                ProuctDetailWidgets().sizeSelectionRow(),
-                SizedBox(height: 8.h),
-                Text(
-                  'Description',
-                  style:
-                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 5.h),
-                ProuctDetailWidgets().productDescription(
-                  widget.ecomBundle.description,
-                ),
-                Spacer(),
-                ProuctDetailWidgets().bottomButtonRow(),
-              ],
+              ]),
             ),
           ),
         ),
