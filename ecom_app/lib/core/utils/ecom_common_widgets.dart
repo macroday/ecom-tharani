@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -52,11 +53,19 @@ class AppWidgets {
               padding: EdgeInsets.all(5.r),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.w),
-                child: Image.network(
-                  imgSrc,
+                child: CachedNetworkImage(
+                  imageUrl: imgSrc,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.error, color: Colors.red),
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => const Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                  // imgSrc,
+                  // fit: BoxFit.cover,
+                  // errorBuilder: (context, error, stackTrace) =>
+                  //     const Icon(Icons.error, color: Colors.red),
                 ),
               ),
             ),
@@ -99,5 +108,23 @@ class AppWidgets {
         ],
       ),
     );
+  }
+
+  static Widget ecomEmptyScreen(IconData emptyIcon, String emptyText) {
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Icon(
+        emptyIcon,
+        size: 60.sp,
+        color: Colors.grey,
+      ),
+      Text(
+        emptyText,
+        style: GoogleFonts.montserrat(
+          color: Colors.grey,
+          fontSize: 20.sp,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ]);
   }
 }

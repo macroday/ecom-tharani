@@ -22,7 +22,7 @@ abstract class ProductDetailState extends Equatable {
 
 class ImageSuggestionEvent extends ProductDetailEvent {
   final int selectdImageIndex;
-  ImageSuggestionEvent({required this.selectdImageIndex});
+  const ImageSuggestionEvent({required this.selectdImageIndex});
 
   @override
   List<Object?> get props => [selectdImageIndex];
@@ -43,7 +43,8 @@ class ImageSuggestionState extends ProductDetailState {
 
 class ImageSuggestionBloc
     extends Bloc<ImageSuggestionEvent, ImageSuggestionState> {
-  ImageSuggestionBloc() : super(ImageSuggestionState(selectdImageIndex: 0)) {
+  ImageSuggestionBloc()
+      : super(const ImageSuggestionState(selectdImageIndex: 0)) {
     on<ImageSuggestionEvent>(
         (ImageSuggestionEvent event, Emitter<ImageSuggestionState> emit) async {
       emit(state.copyWith(selectedIndex: event.selectdImageIndex));
@@ -74,7 +75,7 @@ class SizeSelectionState extends ProductDetailState {
 }
 
 class SizeSelectionBloc extends Bloc<SizeSelectionEvent, SizeSelectionState> {
-  SizeSelectionBloc() : super(SizeSelectionState(sizeIndex: 0)) {
+  SizeSelectionBloc() : super(const SizeSelectionState(sizeIndex: 0)) {
     on<SizeSelectionEvent>(
         (SizeSelectionEvent event, Emitter<SizeSelectionState> emit) {
       emit(state.updateSizeSelection(selectedSizeIndex: event.sizeIndex));
@@ -106,7 +107,7 @@ class ProductQuantityState extends ProductDetailState {
 
 class ProductQuantityBloc
     extends Bloc<ProductQuantityEvent, ProductQuantityState> {
-  ProductQuantityBloc() : super(ProductQuantityState(quantity: 1)) {
+  ProductQuantityBloc() : super(const ProductQuantityState(quantity: 1)) {
     on<ProductQuantityEvent>(
         (ProductQuantityEvent event, Emitter<ProductQuantityState> emit) {
       emit(state.updateQuantity(updatedQuantity: event.quantity));
@@ -122,4 +123,13 @@ class DescriptionCubit extends Cubit<bool> {
   DescriptionCubit() : super(true);
 
   void toggleDescription() => emit(!state);
+}
+
+class CartValueCubit extends Cubit<Map<int, bool>> {
+  CartValueCubit() : super({});
+  void updateCartValue(int productId) {
+    final newState = Map<int, bool>.from(state);
+    newState[productId] = !(state[productId] ?? false);
+    emit(newState);
+  }
 }

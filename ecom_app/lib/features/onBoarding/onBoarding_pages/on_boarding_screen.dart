@@ -214,8 +214,8 @@ Widget _buildGetStartedButton(BuildContext context) {
                 child: Container(
                   width: 40.w,
                   height: 40.h,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 234, 163, 56),
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 234, 163, 56),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

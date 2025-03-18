@@ -5,19 +5,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GetStartedCubit extends Cubit<GetStartedState> {
-  GetStartedCubit() : super(GetStartedState(15.w, false)); // Initial position
+  GetStartedCubit() : super(GetStartedState(15.w, false));
 
   void updatePosition(double dx) {
     final newPosition = (state.position + dx).clamp(15.w, 270.w);
-    final isAtEnd = newPosition >= 270.w; // Check if reached the end
+    final isAtEnd = newPosition >= 270.w;
     emit(GetStartedState(newPosition, isAtEnd));
   }
 
   void checkNavigation(Function navigateToHome) {
     if (state.position >= 270.w) {
-      navigateToHome(); // Navigate when fully dragged
+      navigateToHome();
     } else {
-      emit(GetStartedState(15.w, false)); // Reset position and flag
+      emit(GetStartedState(15.w, false));
     }
   }
 }
@@ -30,7 +30,7 @@ class GetStartedState {
 }
 
 class ImageCollageCubit extends Cubit<ScrollController> {
-  final double scrollSpeed = 1.0; // Adjust speed
+  final double scrollSpeed = 1.0;
   late Timer _timer;
 
   ImageCollageCubit() : super(ScrollController()) {
@@ -41,7 +41,7 @@ class ImageCollageCubit extends Cubit<ScrollController> {
     _timer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
       if (state.hasClients) {
         if (state.position.pixels >= state.position.maxScrollExtent - 50) {
-          state.jumpTo(0); // Reset to top smoothly
+          state.jumpTo(0);
         } else {
           state.animateTo(
             state.offset + scrollSpeed,

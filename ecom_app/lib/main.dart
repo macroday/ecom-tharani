@@ -1,5 +1,8 @@
 import 'package:ecom_app/config/routes.dart';
+import 'package:ecom_app/features/cart/cart_bloc/ecom_cart_bloc.dart';
+import 'package:ecom_app/features/favorites/favorite_bloc/ecom_favorite_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -12,31 +15,37 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-        designSize: const Size(360, 690),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (_, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en', 'US'),
-            ],
-            title: 'Mini E-Commerce',
-            theme: ThemeData(
-              primarySwatch: Colors.orange,
-              fontFamily: 'montserrat',
-            ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => CartBloc()),
+        BlocProvider(create: (_) => FavoriteBloc())
+      ],
+      child: ScreenUtilInit(
+          designSize: const Size(360, 690),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          builder: (_, child) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en', 'US'),
+              ],
+              title: 'Mini E-Commerce',
+              theme: ThemeData(
+                primarySwatch: Colors.orange,
+                fontFamily: 'montserrat',
+              ),
 
-            //================== App Routes =================
-            initialRoute: AppRoutes.onBoarding,
-            onGenerateRoute: AppRoutes.navigateToRoute,
-          );
-        });
+              //================== App Routes =================
+              initialRoute: AppRoutes.onBoarding,
+              onGenerateRoute: AppRoutes.navigateToRoute,
+            );
+          }),
+    );
   }
 }

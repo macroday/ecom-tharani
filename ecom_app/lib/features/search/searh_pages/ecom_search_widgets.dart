@@ -1,5 +1,7 @@
 import 'package:ecom_app/config/routes.dart';
+import 'package:ecom_app/core/utils/ecom_common_widgets.dart';
 import 'package:ecom_app/core/utils/ecom_constants.dart';
+import 'package:ecom_app/features/cart/cart_bloc/ecom_cart_bloc.dart';
 import 'package:ecom_app/features/home/home_data/home_model.dart';
 import 'package:ecom_app/features/search/search_bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SearchWidgets {
-  Widget buildCategoryList(BuildContext context) {
+  static Widget buildCategoryList(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -17,18 +19,18 @@ class SearchWidgets {
       itemBuilder: (context, index) {
         return Bounceable(
             scaleFactor: 0.7,
-            onTap: () {
-              Future.delayed(const Duration(milliseconds: 200), () {
-                context.read<SearchBloc>().add(SearchTextChanged(
-                    text: EcomConstants.searchCategories[index]));
-              });
+            onTap: () async {
+              await Future.delayed(const Duration(milliseconds: 200));
+              if (!context.mounted) return;
+              context.read<SearchBloc>().add(SearchTextChanged(
+                  text: EcomConstants.searchCategories[index]));
             },
             child: categoryListItem(index));
       },
     );
   }
 
-  Widget categoryListItem(int categoryIndex) {
+  static Widget categoryListItem(int categoryIndex) {
     return Column(children: [
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -77,7 +79,7 @@ class SearchWidgets {
     ]);
   }
 
-  Widget searchPageContent(BuildContext context) {
+  static Widget searchPageContent(BuildContext context) {
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         if (state is SearchInitialState) {
@@ -87,24 +89,26 @@ class SearchWidgets {
         } else if (state is SearchLoadedState) {
           return searchItemContainer(state);
         } else if (state is SearchErrorState) {
-          return Center(child: Text(state.error));
+          return Center(
+              child: AppWidgets.ecomEmptyScreen(
+                  Icons.search_outlined, state.error));
         }
         return const Center(child: Text('Start searching...'));
       },
     );
   }
 
-  Widget searchItemContainer(SearchLoadedState state) {
+  static Widget searchItemContainer(SearchLoadedState state) {
     return ListView.builder(
       itemCount: state.searchResult.length,
       itemBuilder: (context, index) {
         final product = state.searchResult[index];
         return Bounceable(
           scaleFactor: 0.6,
-          onTap: () {
-            Future.delayed(const Duration(milliseconds: 300), () {
-              onSearchItemTap(context, product);
-            });
+          onTap: () async {
+            await Future.delayed(const Duration(milliseconds: 300));
+            if (!context.mounted) return;
+            onSearchItemTap(context, product);
           },
           child: Container(
             margin: EdgeInsets.only(left: 8.w, right: 8.w, bottom: 5.h),
@@ -134,12 +138,13 @@ class SearchWidgets {
     );
   }
 
-  void onSearchItemTap(BuildContext context, HomeModel tappedProduct) {
-    EcomBundle bundle = EcomBundle(
-        imageUrl: tappedProduct.image,
+  static void onSearchItemTap(BuildContext context, HomeModel tappedProduct) {
+    CartBundle bundle = CartBundle(
+        id: tappedProduct.id,
         title: tappedProduct.title,
-        description: tappedProduct.description,
-        price: tappedProduct.price);
+        imageUrl: tappedProduct.image,
+        price: tappedProduct.price,
+        description: tappedProduct.description);
     Navigator.pushNamed(context, AppRoutes.productDetail, arguments: bundle);
   }
 }

@@ -1,8 +1,11 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecom_app/config/routes.dart';
-import 'package:ecom_app/core/utils/ecom_constants.dart';
 import 'package:ecom_app/core/utils/ecom_common_widgets.dart';
+import 'package:ecom_app/features/cart/cart_bloc/ecom_cart_bloc.dart';
+import 'package:ecom_app/features/favorites/favorite_bloc/ecom_favorite_bloc.dart';
 import 'package:ecom_app/features/home/home_bloc/home_api_bloc/home_api_state_manager.dart';
 import 'package:ecom_app/features/home/home_bloc/home_ui_bloc/module_home_bloc.dart';
+import 'package:ecom_app/features/home/home_data/home_model.dart';
 import 'package:ecom_app/features/product/product_bloc/product_detail_bloc.dart';
 import 'package:ecom_app/features/search/search_bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +20,8 @@ class HomeModuleWidgets {
   //
   //======================== App Bar Row ========================
   //
-  Widget homeAppBar(BuildContext context) {
-    return Container(
+  static Widget homeAppBar(BuildContext context) {
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.r, vertical: 10.r),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -38,8 +41,13 @@ class HomeModuleWidgets {
           ),
           Row(
             children: [
-              Padding(
-                padding: EdgeInsets.only(right: 10.w),
+              Bounceable(
+                scaleFactor: 0.6,
+                onTap: () async {
+                  await Future.delayed(const Duration(milliseconds: 300));
+                  if (!context.mounted) return;
+                  Navigator.pushNamed(context, AppRoutes.cart);
+                },
                 child: AppWidgets.appIconTemplate(
                     context,
                     0,
@@ -54,19 +62,24 @@ class HomeModuleWidgets {
                     Icons.shopping_cart_outlined,
                     50),
               ),
-              AppWidgets.appIconTemplate(
-                  context,
-                  0,
-                  0,
-                  0,
-                  0,
-                  40,
-                  35,
-                  20,
-                  Colors.grey.withOpacity(0.2),
-                  Colors.black,
-                  Icons.notifications_outlined,
-                  50),
+              SizedBox(width: 10.w), // Added spacing
+              Bounceable(
+                onTap: () =>
+                    Navigator.pushNamed(context, AppRoutes.notifications),
+                child: AppWidgets.appIconTemplate(
+                    context,
+                    0,
+                    0,
+                    0,
+                    0,
+                    40,
+                    35,
+                    20,
+                    Colors.grey.withOpacity(0.2),
+                    Colors.black,
+                    Icons.notifications_outlined,
+                    50),
+              ),
             ],
           )
         ],
@@ -77,12 +90,13 @@ class HomeModuleWidgets {
   //
   //======================= Bottom Bar ========================
   //
-  Widget homeBottomBar(
-      int selectedIndex, Function(int) onBottomBarItemSelected) {
+  static Widget homeBottomBar(
+      int selectedIndex, ValueChanged<int> onBottomBarItemSelected) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       currentIndex: selectedIndex,
       onTap: onBottomBarItemSelected,
+      backgroundColor: Colors.white,
       selectedItemColor: const Color.fromARGB(255, 234, 163, 56),
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -99,14 +113,16 @@ class HomeModuleWidgets {
   //========================= Init Page Content ========================
   //
 
-  Widget initPageWidget() {
-    PageController bannerController = PageController();
+  static Widget initPageWidget() {
+    final CarouselController bannerController = CarouselController();
+    final ValueNotifier<int> currentBannerIndex = ValueNotifier<int>(0);
+
     return BlocBuilder<HomeApiBloc, HomeApiState>(
       builder: (context, state) {
         if (state is HomeApiInitial) {
           context
               .read<HomeApiBloc>()
-              .add(FetchHomePageProducts(limit: 6, page: 1));
+              .add(FetchHomePageProducts(limit: 4, page: 1));
         }
 
         return NotificationListener<ScrollNotification>(
@@ -135,24 +151,47 @@ class HomeModuleWidgets {
                       width: double.infinity,
                       height: 100.h,
                       margin: EdgeInsets.symmetric(horizontal: 10.r),
-                      child: PageView(
-                        controller: bannerController,
-                        children: [
-                          _buildBanner('assets/images/spclDiscountOne.png'),
-                          _buildBanner('assets/images/spclDiscountTwo.png'),
-                          _buildBanner('assets/images/spclDiscountThree.png'),
-                        ],
+                      child: CarouselSlider.builder(
+                        carouselController: bannerController,
+                        options: CarouselOptions(
+                          height: 100.h,
+                          autoPlay: true,
+                          autoPlayInterval: const Duration(seconds: 3),
+                          autoPlayAnimationDuration:
+                              const Duration(milliseconds: 800),
+                          enlargeCenterPage: true,
+                          viewportFraction: 1.0,
+                          onPageChanged: (index, reason) {
+                            currentBannerIndex.value = index;
+                          },
+                        ),
+                        itemCount: 5,
+                        itemBuilder: (context, index, realIndex) {
+                          final List<String> bannerImages = [
+                            'assets/images/spclDiscountOne.png',
+                            'assets/images/spclDiscountTwo.png',
+                            'assets/images/spclDiscountThree.png',
+                            'assets/images/spclDiscountTwo.png',
+                            'assets/images/spclDiscountThree.png',
+                          ];
+                          return _buildBanner(bannerImages[index]);
+                        },
                       ),
                     ),
                     SizedBox(height: 10.h),
-                    SmoothPageIndicator(
-                      controller: bannerController,
-                      count: 3,
-                      effect: const ExpandingDotsEffect(
-                        activeDotColor: Colors.orange,
-                        dotHeight: 6,
-                        dotWidth: 6,
-                      ),
+                    ValueListenableBuilder<int>(
+                      valueListenable: currentBannerIndex,
+                      builder: (context, index, child) {
+                        return SmoothPageIndicator(
+                          controller: PageController(initialPage: index),
+                          count: 5,
+                          effect: const ExpandingDotsEffect(
+                            activeDotColor: Colors.orange,
+                            dotHeight: 6,
+                            dotWidth: 6,
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(height: 10.h),
                     _buildSectionHeader(),
@@ -168,14 +207,14 @@ class HomeModuleWidgets {
     );
   }
 
-  Widget _buildBanner(String imagePath) {
+  static Widget _buildBanner(String imagePath) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20.r),
       child: Image.asset(imagePath, fit: BoxFit.cover),
     );
   }
 
-  Widget _buildSectionHeader() {
+  static Widget _buildSectionHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -203,14 +242,17 @@ class HomeModuleWidgets {
     );
   }
 
-  Widget homeProductList(HomeApiState state) {
+  static Widget homeProductList(HomeApiState state) {
     if (state is HomeApiLoading) {
       return const SliverToBoxAdapter(
         child: Center(child: CircularProgressIndicator()),
       );
     } else if (state is HomeApiError) {
-      return const SliverToBoxAdapter(
-        child: Center(child: Text('Error loading products')),
+      return SliverToBoxAdapter(
+        child: Expanded(
+            child: Center(
+                child: AppWidgets.ecomEmptyScreen(
+                    Icons.timer_off_outlined, 'Error loading Products'))),
       );
     } else if (state is HomeApiLoaded) {
       return SliverPadding(
@@ -219,19 +261,30 @@ class HomeModuleWidgets {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               final product = state.products[index];
-              return BlocBuilder<LikeValueCubit, Map<int, bool>>(
-                  builder: (context, likeValue) {
-                final bool islikeValue = likeValue[product.id] ?? false;
+              return BlocBuilder<FavoriteBloc, LikeState>(
+                  builder: (context, likeValueState) {
+                final islikeValue = likeValueState.likeBundles
+                    .firstWhere((likeItem) => likeItem.id == product.id,
+                        orElse: () => LikeBundle(
+                            id: product.id,
+                            title: product.title,
+                            price: product.price,
+                            image: product.image,
+                            isLiked: false,
+                            description: product.description,
+                            rating: product.rating))
+                    .isLiked;
                 return Bounceable(
                   scaleFactor: 0.7,
                   onTap: () {
                     Future.delayed(const Duration(milliseconds: 300), () {
                       Navigator.pushNamed(context, AppRoutes.productDetail,
-                          arguments: EcomBundle(
+                          arguments: CartBundle(
                               imageUrl: product.image,
                               title: product.title,
                               description: product.description,
-                              price: product.price));
+                              price: product.price,
+                              id: product.id));
                     });
                   },
                   child: Stack(children: [
@@ -247,15 +300,15 @@ class HomeModuleWidgets {
                       child: Bounceable(
                         scaleFactor: 0.6,
                         onTap: () {
-                          context
-                              .read<LikeValueCubit>()
-                              .updateLikeValue(product.id);
-                          if (!islikeValue) {
-                            EcomConstants.ecomFavoriteList.add(product);
-                          } else if (EcomConstants
-                              .ecomFavoriteList.isNotEmpty) {
-                            EcomConstants.ecomFavoriteList.remove(product);
-                          }
+                          context.read<FavoriteBloc>().add(ToggleLike(
+                              id: product.id,
+                              title: product.title,
+                              image: product.image,
+                              description: product.description,
+                              price: product.price,
+                              rating: Rating(
+                                  rate: product.rating.rate,
+                                  count: product.rating.count)));
                         },
                         child: Container(
                           padding: EdgeInsets.all(2.r),
@@ -273,7 +326,7 @@ class HomeModuleWidgets {
                             !islikeValue
                                 ? Icons.favorite_border_outlined
                                 : Icons.favorite,
-                            color: Colors.red,
+                            color: Colors.orange,
                             size: 18.sp,
                           )),
                         ),
@@ -302,7 +355,7 @@ class HomeModuleWidgets {
   //
   //======================= Search Bar Row ========================
   //
-  Widget homeSearchBar(BuildContext context, FocusNode searchFocus,
+  static Widget homeSearchBar(BuildContext context, FocusNode searchFocus,
       PageController pageController, VoidCallback onTextFieldTap) {
     return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,7 +419,7 @@ class HomeModuleWidgets {
         ]);
   }
 
-  Widget _textFieldWidgets() {
+  static Widget _textFieldWidgets() {
     return SizedBox(
       width: 50.w,
       child: Row(
@@ -388,7 +441,7 @@ class HomeModuleWidgets {
   //
   //========================== Filter Screen ===========================
   //
-  void showFilterBottomSheet(BuildContext context) {
+  static void showFilterBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -469,7 +522,7 @@ class HomeModuleWidgets {
                     ),
                     _buildTextField('Brand', 'eg. H&M'),
                     SizedBox(height: 10.h),
-                    Text('Price Range',
+                    const Text('Price Range',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     BlocBuilder<SliderValueCubit, double>(
                         builder: (context, value) {
@@ -495,14 +548,14 @@ class HomeModuleWidgets {
                       );
                     }),
                     SizedBox(height: 10.h),
-                    Text('Select Size',
+                    const Text('Select Size',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     BlocBuilder<SizeSelectionBloc, SizeSelectionState>(
                         builder: (context, state) {
                       return _buildSizeSelection(context, state);
                     }),
                     SizedBox(height: 10.h),
-                    Text('Color',
+                    const Text('Color',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     _buildColorSelection(),
                     SizedBox(height: 10.h),

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:ecom_app/core/utils/ecom_constants.dart';
+import 'package:ecom_app/core/utils/ecom_product_utils.dart';
 import 'package:ecom_app/features/home/home_data/home_model.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,7 @@ class HomeRepositoryImpl extends HomeRepository {
         final allProducts = (response.data as List)
             .map((jsonData) => HomeModel.fromJson(jsonData))
             .toList();
-        EcomConstants.ecomProductList = allProducts;
+        ProductUtils.ecomProductList = allProducts;
         final startIndex = (page - 1) * limit;
         final endIndex = startIndex + limit;
 

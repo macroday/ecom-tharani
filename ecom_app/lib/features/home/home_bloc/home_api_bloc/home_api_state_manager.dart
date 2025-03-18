@@ -59,6 +59,7 @@ class HomeApiError extends HomeApiState {
 
 class HomeApiBloc extends Bloc<HomeApiEvent, HomeApiState> {
   final GetHomeUseCase _getHomeUseCase;
+
   HomeApiBloc(this._getHomeUseCase) : super(HomeApiInitial()) {
     on<FetchHomePageProducts>(_onFetchHomePageProducts);
   }
@@ -69,9 +70,9 @@ class HomeApiBloc extends Bloc<HomeApiEvent, HomeApiState> {
 
     List<HomeModel> currentProducts = [];
     int nextPage = 1;
+    bool isFirstFetch = state is HomeApiInitial;
 
     if (state is HomeApiLoaded) {
-      debugPrint('************* HOMEAPI LOADED *************');
       final currentState = state as HomeApiLoaded;
 
       if (currentState.hasReachedMax) {
@@ -79,25 +80,18 @@ class HomeApiBloc extends Bloc<HomeApiEvent, HomeApiState> {
         return;
       }
 
-      currentProducts = List.from(currentState.products);
+      currentProducts = currentState.products;
       nextPage = currentState.currentPage + 1;
     }
 
+    if (isFirstFetch) {
+      emit(HomeApiLoading());
+    }
+
     try {
-      if (state is HomeApiInitial) {
-        debugPrint('************* HOMEAPI INITIAL *************');
-        emit(HomeApiLoading());
-      }
-
-      if (state is HomeApiLoading) {
-        debugPrint('************* HOMEAPI LOADING *************');
-      }
-
       debugPrint('************* Fetching Page: $nextPage *************');
-      var products = await _getHomeUseCase(limit: event.limit, page: nextPage);
-
-      debugPrint(
-          '************* Products Received: ${products.length} *************');
+      final products =
+          await _getHomeUseCase(limit: event.limit, page: nextPage);
 
       if (products.isEmpty) {
         debugPrint('************* NO MORE PRODUCTS AVAILABLE *************');
@@ -108,16 +102,16 @@ class HomeApiBloc extends Bloc<HomeApiEvent, HomeApiState> {
         ));
       } else {
         debugPrint(
-            '************* PRODUCTS ADDED TO EXISTING LIST : ${products as List} *************');
+            '************* PRODUCTS ADDED TO EXISTING LIST *************');
         emit(HomeApiLoaded(
-          products: currentProducts + products,
+          products: [...currentProducts, ...products],
           hasReachedMax: products.length < event.limit,
           currentPage: nextPage,
         ));
       }
     } catch (error) {
       debugPrint('************* ERROR FETCHING PRODUCTS: $error *************');
-      emit(HomeApiError(errorMessage: 'Failed to fetch products : $error'));
+      emit(HomeApiError(errorMessage: 'Failed to fetch products: $error'));
     }
   }
 }
