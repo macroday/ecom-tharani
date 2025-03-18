@@ -515,8 +515,23 @@ class HomeModuleWidgets {
                     _buildTextField(context, productCategoryFocus, 'Category',
                         'eg. electronics', false),
                     SizedBox(height: 10.h),
-                    const Text('Price Range',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    RichText(
+                      text: TextSpan(children: [
+                        TextSpan(
+                            text: 'Price Range',
+                            style: GoogleFonts.montserrat(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14.sp)),
+                        TextSpan(
+                            text:
+                                ' (Products with price lower than the set price will appear)',
+                            style: GoogleFonts.montserrat(
+                                color: Colors.black,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500))
+                      ]),
+                    ),
                     BlocBuilder<SliderValueCubit, double>(
                         builder: (context, value) {
                       return Row(
@@ -589,51 +604,42 @@ Widget _buildTextField(BuildContext context, FocusNode textFocus, String label,
 
 Widget _buildSizeSelection(BuildContext context, SizeSelectionState state) {
   const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
-  return Row(
-    children: sizes.map((size) {
-      return Padding(
-        padding: EdgeInsets.only(right: 8.r),
-        child: Bounceable(
-          scaleFactor: 0.6,
-          onTap: () {
-            context
-                .read<SizeSelectionBloc>()
-                .add(SizeSelectionEvent(sizeIndex: sizes.indexOf(size)));
-          },
-          child: Container(
-            width: 40.w,
-            height: 30.h,
-            decoration: BoxDecoration(
-                color: state.sizeIndex == sizes.indexOf(size)
-                    ? const Color.fromARGB(255, 234, 163, 56)
-                    : Colors.transparent,
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10.w)),
-            child: Center(
-              child: Text(
-                size,
-                style: GoogleFonts.montserrat(
-                    color: Colors.black,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600),
+  return Padding(
+    padding: EdgeInsets.only(top: 8.h),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: sizes.map((size) {
+        return Padding(
+          padding: EdgeInsets.only(right: 8.r),
+          child: Bounceable(
+            scaleFactor: 0.6,
+            onTap: () {
+              context
+                  .read<SizeSelectionBloc>()
+                  .add(SizeSelectionEvent(sizeIndex: sizes.indexOf(size)));
+            },
+            child: Container(
+              width: 40.w,
+              height: 30.h,
+              decoration: BoxDecoration(
+                  color: state.sizeIndex == sizes.indexOf(size)
+                      ? const Color.fromARGB(255, 234, 163, 56)
+                      : Colors.transparent,
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10.w)),
+              child: Center(
+                child: Text(
+                  size,
+                  style: GoogleFonts.montserrat(
+                      color: Colors.black,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600),
+                ),
               ),
             ),
           ),
-        ),
-      );
-    }).toList(),
-  );
-}
-
-Widget _buildColorSelection() {
-  const colors = [Colors.blue, Colors.green, Colors.grey, Colors.brown];
-  return Wrap(
-    spacing: 8,
-    children: colors.map((color) {
-      return CircleAvatar(
-        backgroundColor: color,
-        radius: 12,
-      );
-    }).toList(),
+        );
+      }).toList(),
+    ),
   );
 }
