@@ -355,8 +355,13 @@ class HomeModuleWidgets {
   //
   //======================= Search Bar Row ========================
   //
-  static Widget homeSearchBar(BuildContext context, FocusNode searchFocus,
-      PageController pageController, VoidCallback onTextFieldTap) {
+  static Widget homeSearchBar(
+    BuildContext context,
+    FocusNode searchFocus,
+    PageController pageController,
+    VoidCallback onTextFieldTap,
+    VoidCallback onFilterButtonTap,
+  ) {
     return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -379,9 +384,8 @@ class HomeModuleWidgets {
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut);
                   context.read<HomeBloc>().updatePageindex(1);
-                  context
-                      .read<SearchBloc>()
-                      .add(SearchTextChanged(text: value));
+                  context.read<SearchBloc>().add(
+                      SearchTextChanged(text: value, isProductName: false));
                 },
                 decoration: InputDecoration(
                   hintText: 'Search...',
@@ -411,7 +415,7 @@ class HomeModuleWidgets {
           Bounceable(
             scaleFactor: 0.6,
             onTap: () {
-              showFilterBottomSheet(context);
+              onFilterButtonTap();
             },
             child: AppWidgets.appIconTemplate(context, 0, 3.5, 15, 0, 45, 40,
                 25, Colors.grey.withOpacity(0.2), Colors.black, Icons.tune, 50),
@@ -441,7 +445,8 @@ class HomeModuleWidgets {
   //
   //========================== Filter Screen ===========================
   //
-  static void showFilterBottomSheet(BuildContext context) {
+  static void showFilterBottomSheet(BuildContext context,
+      FocusNode productNameFocus, FocusNode productCategoryFocus) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -455,7 +460,7 @@ class HomeModuleWidgets {
             BlocProvider<SizeSelectionBloc>(
                 create: (context) => SizeSelectionBloc()),
             BlocProvider<SliderValueCubit>(
-                create: (context) => SliderValueCubit())
+                create: (context) => SliderValueCubit()),
           ],
           child: GestureDetector(
             onTap: () {
@@ -492,12 +497,13 @@ class HomeModuleWidgets {
                     SizedBox(
                       height: 10.h,
                     ),
-                    _buildTextField('Product Name', 'eg. Shirt'),
+                    _buildTextField(context, productNameFocus, 'Product Name',
+                        'eg. Shirt', true),
                     SizedBox(
                       height: 10.h,
                     ),
                     Text(
-                      'Product Code',
+                      'Category',
                       style: GoogleFonts.montserrat(
                           fontSize: 14.sp,
                           color: Colors.black,
@@ -506,21 +512,8 @@ class HomeModuleWidgets {
                     SizedBox(
                       height: 10.h,
                     ),
-                    _buildTextField('Product Code', 'eg. SKU243'),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Text(
-                      'Brand',
-                      style: GoogleFonts.montserrat(
-                          fontSize: 14.sp,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _buildTextField('Brand', 'eg. H&M'),
+                    _buildTextField(context, productCategoryFocus, 'Category',
+                        'eg. electronics', false),
                     SizedBox(height: 10.h),
                     const Text('Price Range',
                         style: TextStyle(fontWeight: FontWeight.bold)),
@@ -541,6 +534,9 @@ class HomeModuleWidgets {
                               context
                                   .read<SliderValueCubit>()
                                   .updateSliderValue(value);
+                              context.read<SearchBloc>().add(PriceRangeChanged(
+                                    price: value,
+                                  ));
                             },
                           )),
                           Text('\$${value.toStringAsFixed(2)}'),
@@ -554,11 +550,7 @@ class HomeModuleWidgets {
                         builder: (context, state) {
                       return _buildSizeSelection(context, state);
                     }),
-                    SizedBox(height: 10.h),
-                    const Text('Color',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    _buildColorSelection(),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 30.h),
                   ],
                 ),
               ),
@@ -570,10 +562,17 @@ class HomeModuleWidgets {
   }
 }
 
-Widget _buildTextField(String label, String hint) {
+Widget _buildTextField(BuildContext context, FocusNode textFocus, String label,
+    String hint, bool isProdName) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
     child: TextField(
+      focusNode: textFocus,
+      onChanged: (value) {
+        context
+            .read<SearchBloc>()
+            .add(SearchTextChanged(text: value, isProductName: isProdName));
+      },
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,

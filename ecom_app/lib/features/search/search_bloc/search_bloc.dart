@@ -23,11 +23,22 @@ abstract class SearchState extends Equatable {
 
 class SearchTextChanged extends SearchEvent {
   final String text;
-  const SearchTextChanged({required this.text});
+  final bool isProductName;
+  const SearchTextChanged({required this.text, required this.isProductName});
   @override
-  List<Object> get props => [text];
+  List<Object> get props => [text, isProductName];
 }
 
+class PriceRangeChanged extends SearchEvent {
+  final double price;
+  const PriceRangeChanged({
+    required this.price,
+  });
+  @override
+  List<Object> get props => [
+        price,
+      ];
+}
 //
 //================== Search State ===================
 //
@@ -63,10 +74,31 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         return;
       }
       final List<HomeModel> filteredProducts = event.text.length > 2
+          ? event.isProductName
+              ? allProducts
+                  .where((product) => product.title
+                      .toLowerCase()
+                      .contains(event.text.toLowerCase()))
+                  .toList()
+              : allProducts
+                  .where((product) => product.category
+                      .toLowerCase()
+                      .contains(event.text.toLowerCase()))
+                  .toList()
+          : [];
+      if (filteredProducts.isEmpty) {
+        emit(const SearchErrorState(error: 'No products found'));
+      } else {
+        emit(SearchLoadedState(searchResult: filteredProducts));
+      }
+    });
+    on<PriceRangeChanged>((event, emit) {
+      if (event.price < 5) {
+        emit(SearchInitialState());
+      }
+      final List<HomeModel> filteredProducts = event.price > 5
           ? allProducts
-              .where((product) => product.category
-                  .toLowerCase()
-                  .contains(event.text.toLowerCase()))
+              .where((product) => (product.price <= event.price))
               .toList()
           : [];
       if (filteredProducts.isEmpty) {

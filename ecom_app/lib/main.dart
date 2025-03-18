@@ -1,6 +1,8 @@
 import 'package:ecom_app/config/routes.dart';
+import 'package:ecom_app/core/utils/ecom_product_utils.dart';
 import 'package:ecom_app/features/cart/cart_bloc/ecom_cart_bloc.dart';
 import 'package:ecom_app/features/favorites/favorite_bloc/ecom_favorite_bloc.dart';
+import 'package:ecom_app/features/search/search_bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -18,7 +20,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => CartBloc()),
-        BlocProvider(create: (_) => FavoriteBloc())
+        BlocProvider(create: (_) => FavoriteBloc()),
+        BlocProvider(create: (_) => SearchBloc(ProductUtils.ecomProductList))
       ],
       child: ScreenUtilInit(
           designSize: const Size(360, 690),

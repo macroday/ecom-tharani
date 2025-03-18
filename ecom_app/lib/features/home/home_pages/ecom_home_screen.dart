@@ -7,9 +7,9 @@ import 'package:ecom_app/features/home/home_data/home_repository.dart';
 import 'package:ecom_app/features/home/home_domain/home_usecase.dart';
 import 'package:ecom_app/features/home/home_pages/home_module_widgets.dart';
 import 'package:ecom_app/features/profile/profile_screen.dart';
-import 'package:ecom_app/features/search/search_bloc/search_bloc.dart';
 import 'package:ecom_app/features/search/searh_pages/ecom_search_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
@@ -24,11 +24,12 @@ class EcomHomePage extends StatefulWidget {
 
 class EcomHomeState extends State<EcomHomePage> {
   final PageController _pageController = PageController(initialPage: 0);
+  late FocusNode productNameFocus = FocusNode();
+  late FocusNode productCategoryFocus = FocusNode();
   FocusNode searchFocus = FocusNode();
   @override
   void initState() {
     super.initState();
-    searchFocus = FocusNode();
     searchFocus.addListener(() {
       if (searchFocus.hasFocus) {
         _pageController.animateToPage(1,
@@ -43,9 +44,11 @@ class EcomHomeState extends State<EcomHomePage> {
     super.dispose();
     _pageController.dispose();
     searchFocus.dispose();
+    productNameFocus.dispose();
+    productCategoryFocus.dispose();
   }
 
-  void _navigateToPage(int index) {
+  Future<void> _navigateToPage(int index) async {
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
@@ -69,9 +72,6 @@ class EcomHomeState extends State<EcomHomePage> {
         BlocProvider<HomeApiBloc>(
           create: (context) => HomeApiBloc(context.read<GetHomeUseCase>()),
         ),
-        BlocProvider<SearchBloc>(
-          create: (_) => SearchBloc(ProductUtils.ecomProductList),
-        ),
       ],
       child: BlocBuilder<HomeBloc, int>(builder: (context, selectedIndex) {
         return Scaffold(
@@ -87,11 +87,23 @@ class EcomHomeState extends State<EcomHomePage> {
                   children: [
                     HomeModuleWidgets.homeAppBar(context),
                     HomeModuleWidgets.homeSearchBar(
-                        context, searchFocus, _pageController, () {
-                      _navigateToPage(1);
-                      context.read<HomeBloc>().updatePageindex(1);
-                      searchFocus.requestFocus();
-                    }),
+                      context,
+                      searchFocus,
+                      _pageController,
+                      () async {
+                        await _navigateToPage(1);
+                        if (!context.mounted) return;
+                        context.read<HomeBloc>().updatePageindex(1);
+                        searchFocus.requestFocus();
+                      },
+                      () async {
+                        await _navigateToPage(1);
+                        if (!context.mounted) return;
+                        context.read<HomeBloc>().updatePageindex(1);
+                        HomeModuleWidgets.showFilterBottomSheet(
+                            context, productNameFocus, productCategoryFocus);
+                      },
+                    ),
                     Expanded(
                         child: PageView(
                       controller: _pageController,
@@ -114,8 +126,9 @@ class EcomHomeState extends State<EcomHomePage> {
             ),
           ),
           bottomNavigationBar:
-              HomeModuleWidgets.homeBottomBar(selectedIndex, (index) {
-            _navigateToPage(index);
+              HomeModuleWidgets.homeBottomBar(selectedIndex, (index) async {
+            await _navigateToPage(index);
+            if (!context.mounted) return;
             context.read<HomeBloc>().updatePageindex(index);
           }),
         );
