@@ -141,66 +141,73 @@ class HomeModuleWidgets {
             }
             return false;
           },
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 100.h,
-                      margin: EdgeInsets.symmetric(horizontal: 10.r),
-                      child: CarouselSlider.builder(
-                        carouselController: bannerController,
-                        options: CarouselOptions(
-                          height: 100.h,
-                          autoPlay: true,
-                          autoPlayInterval: const Duration(seconds: 3),
-                          autoPlayAnimationDuration:
-                              const Duration(milliseconds: 800),
-                          enlargeCenterPage: true,
-                          viewportFraction: 1.0,
-                          onPageChanged: (index, reason) {
-                            currentBannerIndex.value = index;
+          child: RefreshIndicator(
+            onRefresh: () async {
+              context
+                  .read<HomeApiBloc>()
+                  .add(FetchHomePageProducts(limit: 30, page: 1));
+            },
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 100.h,
+                        margin: EdgeInsets.symmetric(horizontal: 10.r),
+                        child: CarouselSlider.builder(
+                          carouselController: bannerController,
+                          options: CarouselOptions(
+                            height: 100.h,
+                            autoPlay: true,
+                            autoPlayInterval: const Duration(seconds: 3),
+                            autoPlayAnimationDuration:
+                                const Duration(milliseconds: 800),
+                            enlargeCenterPage: true,
+                            viewportFraction: 1.0,
+                            onPageChanged: (index, reason) {
+                              currentBannerIndex.value = index;
+                            },
+                          ),
+                          itemCount: 5,
+                          itemBuilder: (context, index, realIndex) {
+                            final List<String> bannerImages = [
+                              'assets/images/spclDiscountOne.png',
+                              'assets/images/spclDiscountTwo.png',
+                              'assets/images/spclDiscountThree.png',
+                              'assets/images/spclDiscountTwo.png',
+                              'assets/images/spclDiscountThree.png',
+                            ];
+                            return _buildBanner(bannerImages[index]);
                           },
                         ),
-                        itemCount: 5,
-                        itemBuilder: (context, index, realIndex) {
-                          final List<String> bannerImages = [
-                            'assets/images/spclDiscountOne.png',
-                            'assets/images/spclDiscountTwo.png',
-                            'assets/images/spclDiscountThree.png',
-                            'assets/images/spclDiscountTwo.png',
-                            'assets/images/spclDiscountThree.png',
-                          ];
-                          return _buildBanner(bannerImages[index]);
+                      ),
+                      SizedBox(height: 10.h),
+                      ValueListenableBuilder<int>(
+                        valueListenable: currentBannerIndex,
+                        builder: (context, index, child) {
+                          return SmoothPageIndicator(
+                            controller: PageController(initialPage: index),
+                            count: 5,
+                            effect: const ExpandingDotsEffect(
+                              activeDotColor: Colors.orange,
+                              dotHeight: 6,
+                              dotWidth: 6,
+                            ),
+                          );
                         },
                       ),
-                    ),
-                    SizedBox(height: 10.h),
-                    ValueListenableBuilder<int>(
-                      valueListenable: currentBannerIndex,
-                      builder: (context, index, child) {
-                        return SmoothPageIndicator(
-                          controller: PageController(initialPage: index),
-                          count: 5,
-                          effect: const ExpandingDotsEffect(
-                            activeDotColor: Colors.orange,
-                            dotHeight: 6,
-                            dotWidth: 6,
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 10.h),
-                    _buildSectionHeader(),
-                    SizedBox(height: 10.h),
-                  ],
+                      SizedBox(height: 10.h),
+                      _buildSectionHeader(),
+                      SizedBox(height: 10.h),
+                    ],
+                  ),
                 ),
-              ),
-              homeProductList(state),
-            ],
+                homeProductList(state),
+              ],
+            ),
           ),
         );
       },
