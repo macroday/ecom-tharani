@@ -1,5 +1,5 @@
 import 'package:ecom_app/config/routes.dart';
-import 'package:ecom_app/core/utils/ecom_product_utils.dart';
+import 'package:ecom_app/core/utils/ecom_constants.dart';
 import 'package:ecom_app/features/cart/cart_bloc/ecom_cart_bloc.dart';
 import 'package:ecom_app/features/favorites/favorite_bloc/ecom_favorite_bloc.dart';
 import 'package:ecom_app/features/search/search_bloc/search_bloc.dart';

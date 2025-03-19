@@ -1,4 +1,4 @@
-import 'package:ecom_app/core/utils/ecom_product_utils.dart';
+import 'package:ecom_app/core/utils/ecom_constants.dart';
 import 'package:ecom_app/features/favorites/favorite_pages/ecom_favorite_screen.dart';
 import 'package:ecom_app/features/history/history_screen.dart';
 import 'package:ecom_app/features/home/home_bloc/home_api_bloc/home_api_state_manager.dart';

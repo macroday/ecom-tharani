@@ -1,3 +1,5 @@
+import 'package:ecom_app/features/home/home_data/home_model.dart';
+
 class EcomConstants {
   static const imageList = [
     'assets/images/mens_wear.jpg',
@@ -46,4 +48,8 @@ class EcomBundle {
       required this.description,
       required this.price,
       required this.id});
+}
+
+class ProductUtils {
+  static List<HomeModel> ecomProductList = [];
 }

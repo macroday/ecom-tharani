@@ -1,4 +1,4 @@
-import 'package:ecom_app/core/utils/ecom_product_utils.dart';
+import 'package:ecom_app/core/utils/ecom_constants.dart';
 import 'package:ecom_app/features/home/home_data/home_model.dart';
 import 'package:ecom_app/features/home/home_domain/home_usecase.dart';
 import 'package:equatable/equatable.dart';
