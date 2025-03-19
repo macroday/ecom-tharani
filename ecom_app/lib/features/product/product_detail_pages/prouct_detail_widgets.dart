@@ -1,6 +1,6 @@
 import 'package:ecom_app/config/routes.dart';
 import 'package:ecom_app/features/cart/cart_bloc/ecom_cart_bloc.dart';
-import 'package:ecom_app/features/checkOut/check_out_model/check_out_model.dart';
+import 'package:ecom_app/features/checkOut/check_out_bloc/check_out_model.dart';
 import 'package:ecom_app/features/product/product_bloc/product_detail_bloc.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
 import 'package:ecom_app/core/utils/ecom_common_widgets.dart';
 import 'package:ecom_app/features/checkOut/check_out_bloc/check_out_bloc.dart';
-import 'package:ecom_app/features/checkOut/check_out_model/check_out_model.dart';
+import 'package:ecom_app/features/checkOut/check_out_bloc/check_out_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';

@@ -215,30 +215,18 @@ class HomeModuleWidgets {
   }
 
   static Widget _buildSectionHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 20.r),
-          child: Text(
-            'Curated Weekly',
-            style: GoogleFonts.montserrat(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 14.sp),
-          ),
+    return Padding(
+      padding: EdgeInsets.only(left: 20.r),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Text(
+          'Curated Weekly',
+          style: GoogleFonts.montserrat(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 14.sp),
         ),
-        Padding(
-          padding: EdgeInsets.only(right: 20.w),
-          child: Text(
-            'See All',
-            style: GoogleFonts.montserrat(
-                color: const Color.fromARGB(255, 234, 163, 56),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
+      ),
     );
   }
 

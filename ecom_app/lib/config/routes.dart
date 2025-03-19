@@ -1,7 +1,7 @@
 import 'package:ecom_app/core/utils/ecom_constants.dart';
 import 'package:ecom_app/features/cart/cart_bloc/ecom_cart_bloc.dart';
 import 'package:ecom_app/features/cart/cart_pages/ecom_cart_screen.dart';
-import 'package:ecom_app/features/checkOut/check_out_model/check_out_model.dart';
+import 'package:ecom_app/features/checkOut/check_out_bloc/check_out_model.dart';
 import 'package:ecom_app/features/checkOut/check_out_pages/check_out_screen.dart';
 import 'package:ecom_app/features/home/home_pages/ecom_home_screen.dart';
 import 'package:ecom_app/features/notification/notification_screen.dart';
