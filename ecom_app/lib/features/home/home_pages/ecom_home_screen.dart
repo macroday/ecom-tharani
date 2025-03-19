@@ -97,9 +97,6 @@ class EcomHomeState extends State<EcomHomePage> {
                         searchFocus.requestFocus();
                       },
                       () async {
-                        await _navigateToPage(1);
-                        if (!context.mounted) return;
-                        context.read<HomeBloc>().updatePageindex(1);
                         HomeModuleWidgets.showFilterBottomSheet(
                             context, productNameFocus, productCategoryFocus);
                       },

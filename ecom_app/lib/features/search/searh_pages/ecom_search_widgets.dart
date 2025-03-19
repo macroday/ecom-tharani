@@ -23,8 +23,7 @@ class SearchWidgets {
               await Future.delayed(const Duration(milliseconds: 200));
               if (!context.mounted) return;
               context.read<SearchBloc>().add(SearchTextChanged(
-                  text: EcomConstants.searchCategories[index],
-                  isProductName: false));
+                  text: EcomConstants.searchCategories[index]));
             },
             child: categoryListItem(index));
       },

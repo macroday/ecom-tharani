@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => CartBloc()),
         BlocProvider(create: (_) => FavoriteBloc()),
-        BlocProvider(create: (_) => SearchBloc(ProductUtils.ecomProductList))
+        BlocProvider(create: (_) => SearchBloc(ProductUtils.ecomProductList)),
       ],
       child: ScreenUtilInit(
           designSize: const Size(360, 690),

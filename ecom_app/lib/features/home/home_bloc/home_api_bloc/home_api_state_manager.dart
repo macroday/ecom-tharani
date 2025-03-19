@@ -1,3 +1,4 @@
+import 'package:ecom_app/core/utils/ecom_product_utils.dart';
 import 'package:ecom_app/features/home/home_data/home_model.dart';
 import 'package:ecom_app/features/home/home_domain/home_usecase.dart';
 import 'package:equatable/equatable.dart';
@@ -21,6 +22,26 @@ class FetchHomePageProducts extends HomeApiEvent {
   List<Object?> get props => [limit, page];
 }
 
+class FilterProductList extends HomeApiEvent {
+  final String text;
+  final double price;
+  final bool isNameFieldActive;
+  final bool isPriceFieldActive;
+  final int limit;
+  final int page;
+  FilterProductList(
+      {required this.text,
+      required this.price,
+      required this.isNameFieldActive,
+      required this.isPriceFieldActive,
+      required this.limit,
+      required this.page});
+  @override
+  List<Object?> get props =>
+      [text, price, isNameFieldActive, isPriceFieldActive, limit, page];
+}
+
+class FilterReset extends HomeApiEvent {}
 //
 //======================== State ===========================
 //
@@ -62,6 +83,8 @@ class HomeApiBloc extends Bloc<HomeApiEvent, HomeApiState> {
 
   HomeApiBloc(this._getHomeUseCase) : super(HomeApiInitial()) {
     on<FetchHomePageProducts>(_onFetchHomePageProducts);
+    on<FilterProductList>(_getFilteredList);
+    on<FilterReset>(_resetProductList);
   }
 
   Future<void> _onFetchHomePageProducts(
@@ -113,5 +136,50 @@ class HomeApiBloc extends Bloc<HomeApiEvent, HomeApiState> {
       debugPrint('************* ERROR FETCHING PRODUCTS: $error *************');
       emit(HomeApiError(errorMessage: 'Failed to fetch products: $error'));
     }
+  }
+
+  Future<void> _getFilteredList(
+      FilterProductList event, Emitter<HomeApiState> emit) async {
+    List<HomeModel> allProducts = [];
+    if (event.text.isEmpty && !event.isPriceFieldActive) {
+      if (state is HomeApiLoaded) {
+        final currentState = state as HomeApiLoaded;
+        emit(HomeApiLoaded(
+          products: currentState.products,
+          hasReachedMax: currentState.hasReachedMax,
+          currentPage: currentState.currentPage,
+        ));
+      } else {
+        emit(HomeApiInitial());
+      }
+      return;
+    }
+    allProducts = ProductUtils.ecomProductList;
+    final List<HomeModel> filteredProducts = allProducts.where((product) {
+      bool matchesName = event.isNameFieldActive
+          ? product.title.toLowerCase().contains(event.text.toLowerCase())
+          : true;
+
+      bool matchesCategory = !event.isNameFieldActive
+          ? product.category.toLowerCase().contains(event.text.toLowerCase())
+          : true;
+
+      bool matchesPrice =
+          event.isPriceFieldActive ? product.price < event.price : true;
+
+      return matchesName && matchesCategory && matchesPrice;
+    }).toList();
+    if (filteredProducts.isEmpty) {
+      emit(HomeApiError(errorMessage: 'No Products found'));
+    } else {
+      emit(HomeApiLoaded(
+          products: filteredProducts, hasReachedMax: true, currentPage: 1));
+    }
+  }
+
+  Future<void> _resetProductList(
+      FilterReset event, Emitter<HomeApiState> emit) async {
+    emit(HomeApiInitial());
+    add(FetchHomePageProducts(limit: 30, page: 1));
   }
 }

@@ -384,8 +384,9 @@ class HomeModuleWidgets {
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut);
                   context.read<HomeBloc>().updatePageindex(1);
-                  context.read<SearchBloc>().add(
-                      SearchTextChanged(text: value, isProductName: false));
+                  context.read<SearchBloc>().add(SearchTextChanged(
+                        text: value,
+                      ));
                 },
                 decoration: InputDecoration(
                   hintText: 'Search...',
@@ -447,6 +448,7 @@ class HomeModuleWidgets {
   //
   static void showFilterBottomSheet(BuildContext context,
       FocusNode productNameFocus, FocusNode productCategoryFocus) {
+    final homeApiBloc = context.read<HomeApiBloc>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -457,6 +459,7 @@ class HomeModuleWidgets {
       builder: (context) {
         return MultiBlocProvider(
           providers: [
+            BlocProvider.value(value: homeApiBloc),
             BlocProvider<SizeSelectionBloc>(
                 create: (context) => SizeSelectionBloc()),
             BlocProvider<SliderValueCubit>(
@@ -497,8 +500,8 @@ class HomeModuleWidgets {
                     SizedBox(
                       height: 10.h,
                     ),
-                    _buildTextField(context, productNameFocus, 'Product Name',
-                        'eg. Shirt', true),
+                    _buildTextField(productNameFocus, 'Product Name',
+                        'eg. Shirt', true, homeApiBloc),
                     SizedBox(
                       height: 10.h,
                     ),
@@ -512,8 +515,8 @@ class HomeModuleWidgets {
                     SizedBox(
                       height: 10.h,
                     ),
-                    _buildTextField(context, productCategoryFocus, 'Category',
-                        'eg. electronics', false),
+                    _buildTextField(productCategoryFocus, 'Category',
+                        'eg. electronics', false, homeApiBloc),
                     SizedBox(height: 10.h),
                     RichText(
                       text: TextSpan(children: [
@@ -549,9 +552,13 @@ class HomeModuleWidgets {
                               context
                                   .read<SliderValueCubit>()
                                   .updateSliderValue(value);
-                              context.read<SearchBloc>().add(PriceRangeChanged(
-                                    price: value,
-                                  ));
+                              homeApiBloc.add(FilterProductList(
+                                  text: '',
+                                  price: value,
+                                  isNameFieldActive: false,
+                                  isPriceFieldActive: true,
+                                  limit: 4,
+                                  page: 1));
                             },
                           )),
                           Text('\$${value.toStringAsFixed(2)}'),
@@ -565,6 +572,29 @@ class HomeModuleWidgets {
                         builder: (context, state) {
                       return _buildSizeSelection(context, state);
                     }),
+                    SizedBox(height: 20.h),
+                    Bounceable(
+                      scaleFactor: 0.6,
+                      onTap: () {
+                        homeApiBloc.add(FilterReset());
+                      },
+                      child: Container(
+                          width: double.infinity,
+                          height: 50.h,
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 234, 163, 56),
+                            borderRadius: BorderRadius.circular(22.w),
+                          ),
+                          child: Center(
+                              child: Text(
+                            'Reset',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 20.sp,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ))),
+                    ),
                     SizedBox(height: 30.h),
                   ],
                 ),
@@ -577,16 +607,20 @@ class HomeModuleWidgets {
   }
 }
 
-Widget _buildTextField(BuildContext context, FocusNode textFocus, String label,
-    String hint, bool isProdName) {
+Widget _buildTextField(FocusNode textFocus, String label, String hint,
+    bool isProdName, var homeApiBloc) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 10),
     child: TextField(
       focusNode: textFocus,
       onChanged: (value) {
-        context
-            .read<SearchBloc>()
-            .add(SearchTextChanged(text: value, isProductName: isProdName));
+        homeApiBloc.add(FilterProductList(
+            text: value,
+            price: 0.0,
+            isNameFieldActive: isProdName,
+            isPriceFieldActive: false,
+            limit: 4,
+            page: 1));
       },
       decoration: InputDecoration(
         labelText: label,
