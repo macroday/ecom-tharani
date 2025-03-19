@@ -228,37 +228,82 @@ class CheckOutWidgets {
             ),
           ),
         ),
-        Bounceable(
-          scaleFactor: 0.6,
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                "Item bought successfully!!!",
-                style: GoogleFonts.montserrat(
-                    color: Colors.white, fontSize: 16.sp),
+        BlocBuilder<PaymentBloc, PaymentState>(
+            builder: (context, paymentState) {
+          return Bounceable(
+            scaleFactor: 0.6,
+            onTap: () {
+              if (!paymentState.isPaymentModeSelected) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                          backgroundColor: Colors.white,
+                          title: Text(
+                            'Choose Payment Method',
+                            style: GoogleFonts.montserrat(
+                                color: Colors.black,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          content: const Text(
+                              'Please choose a payment method for buying'),
+                          actions: [
+                            Bounceable(
+                              scaleFactor: 0.6,
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                  width: double.infinity,
+                                  height: 45.h,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromARGB(255, 234, 163, 56),
+                                    borderRadius: BorderRadius.circular(22.w),
+                                  ),
+                                  child: Center(
+                                      child: Text(
+                                    'OK',
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w500),
+                                  ))),
+                            )
+                          ]);
+                    });
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    "Item bought successfully!!!",
+                    style: GoogleFonts.montserrat(
+                        color: Colors.white, fontSize: 16.sp),
+                  ),
+                  backgroundColor: Colors.orange,
+                ));
+                Navigator.of(context).pop();
+              }
+            },
+            child: Container(
+              width: 150.w,
+              height: 45.h,
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 234, 163, 56),
+                borderRadius: BorderRadius.circular(32.w),
               ),
-              backgroundColor: Colors.orange,
-            ));
-            Navigator.of(context).pop();
-          },
-          child: Container(
-            width: 150.w,
-            height: 45.h,
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 234, 163, 56),
-              borderRadius: BorderRadius.circular(32.w),
-            ),
-            child: Center(
-              child: Text(
-                'Buy Now',
-                style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w600),
+              child: Center(
+                child: Text(
+                  'Buy Now',
+                  style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600),
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        }),
       ],
     );
   }

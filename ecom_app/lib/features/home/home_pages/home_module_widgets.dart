@@ -350,66 +350,82 @@ class HomeModuleWidgets {
     VoidCallback onTextFieldTap,
     VoidCallback onFilterButtonTap,
   ) {
-    return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            width: 280.w,
-            height: 60.h,
-            margin: EdgeInsets.only(
-              left: 10.w,
-            ),
-            child: SizedBox(
-              height: double.infinity,
-              child: TextField(
-                focusNode: searchFocus,
-                onTap: () {
-                  onTextFieldTap();
-                },
-                onChanged: (value) {
-                  pageController.animateToPage(1,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut);
-                  context.read<HomeBloc>().updatePageindex(1);
-                  context.read<SearchBloc>().add(SearchTextChanged(
-                        text: value,
-                      ));
-                },
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  prefixIcon: Icon(
-                    Icons.search_rounded,
-                    size: 22.sp,
-                    color: Colors.grey,
+    return BlocBuilder<FilterVisibility, bool>(builder: (context, isVisible) {
+      return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: 280.w,
+              height: 60.h,
+              margin: EdgeInsets.only(
+                left: 10.w,
+              ),
+              child: SizedBox(
+                height: double.infinity,
+                child: TextField(
+                  focusNode: searchFocus,
+                  onTap: () {
+                    onTextFieldTap();
+                  },
+                  onChanged: (value) {
+                    pageController.animateToPage(1,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                    context.read<HomeBloc>().updatePageindex(1);
+                    context.read<SearchBloc>().add(SearchTextChanged(
+                          text: value,
+                        ));
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                    prefixIcon: Icon(
+                      Icons.search_rounded,
+                      size: 22.sp,
+                      color: Colors.grey,
+                    ),
+                    suffixIcon: _textFieldWidgets(),
+                    filled: true,
+                    fillColor: Colors.grey.shade200,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(22.w),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
-                  suffixIcon: _textFieldWidgets(),
-                  filled: true,
-                  fillColor: Colors.grey.shade200,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(22.w),
-                    borderSide: BorderSide.none,
-                  ),
+                  maxLength: 20,
+                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                  buildCounter: (context,
+                          {required currentLength,
+                          required isFocused,
+                          required maxLength}) =>
+                      null,
                 ),
-                maxLength: 20,
-                maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                buildCounter: (context,
-                        {required currentLength,
-                        required isFocused,
-                        required maxLength}) =>
-                    null,
               ),
             ),
-          ),
-          Bounceable(
-            scaleFactor: 0.6,
-            onTap: () {
-              onFilterButtonTap();
-            },
-            child: AppWidgets.appIconTemplate(context, 0, 3.5, 15, 0, 45, 40,
-                25, Colors.grey.withOpacity(0.2), Colors.black, Icons.tune, 50),
-          )
-        ]);
+            Visibility(
+              visible: isVisible,
+              child: Bounceable(
+                scaleFactor: 0.6,
+                onTap: () {
+                  onFilterButtonTap();
+                },
+                child: AppWidgets.appIconTemplate(
+                    context,
+                    0,
+                    3.5,
+                    15,
+                    0,
+                    45,
+                    40,
+                    25,
+                    Colors.grey.withOpacity(0.2),
+                    Colors.black,
+                    Icons.tune,
+                    50),
+              ),
+            )
+          ]);
+    });
   }
 
   static Widget _textFieldWidgets() {

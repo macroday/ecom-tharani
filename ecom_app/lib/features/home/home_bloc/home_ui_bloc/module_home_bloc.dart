@@ -12,3 +12,8 @@ class SliderValueCubit extends Cubit<double> {
   SliderValueCubit() : super(50.0);
   void updateSliderValue(double value) => emit(value);
 }
+
+class FilterVisibility extends Cubit<bool> {
+  FilterVisibility() : super(true);
+  void updateFilterVisibility(bool value) => emit(!value);
+}

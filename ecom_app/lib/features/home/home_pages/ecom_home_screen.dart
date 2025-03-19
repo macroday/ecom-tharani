@@ -9,7 +9,6 @@ import 'package:ecom_app/features/home/home_pages/home_module_widgets.dart';
 import 'package:ecom_app/features/profile/profile_screen.dart';
 import 'package:ecom_app/features/search/searh_pages/ecom_search_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
@@ -72,6 +71,7 @@ class EcomHomeState extends State<EcomHomePage> {
         BlocProvider<HomeApiBloc>(
           create: (context) => HomeApiBloc(context.read<GetHomeUseCase>()),
         ),
+        BlocProvider<FilterVisibility>(create: (_) => FilterVisibility())
       ],
       child: BlocBuilder<HomeBloc, int>(builder: (context, selectedIndex) {
         return Scaffold(
@@ -105,6 +105,15 @@ class EcomHomeState extends State<EcomHomePage> {
                         child: PageView(
                       controller: _pageController,
                       onPageChanged: (index) {
+                        if (index != 0) {
+                          context
+                              .read<FilterVisibility>()
+                              .updateFilterVisibility(true);
+                        } else {
+                          context
+                              .read<FilterVisibility>()
+                              .updateFilterVisibility(false);
+                        }
                         context.read<HomeBloc>().updatePageindex(index);
                       },
                       children: [
@@ -124,6 +133,11 @@ class EcomHomeState extends State<EcomHomePage> {
           ),
           bottomNavigationBar:
               HomeModuleWidgets.homeBottomBar(selectedIndex, (index) async {
+            if (index != 0) {
+              context.read<FilterVisibility>().updateFilterVisibility(true);
+            } else {
+              context.read<FilterVisibility>().updateFilterVisibility(false);
+            }
             await _navigateToPage(index);
             if (!context.mounted) return;
             context.read<HomeBloc>().updatePageindex(index);
