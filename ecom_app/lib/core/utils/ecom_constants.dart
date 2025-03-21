@@ -33,6 +33,7 @@ class EcomConstants {
   ];
   static const checkOutPath = '/checkOut';
   static const notificationPath = '/notification';
+  static const loginPath = '/login';
 }
 
 class EcomBundle {

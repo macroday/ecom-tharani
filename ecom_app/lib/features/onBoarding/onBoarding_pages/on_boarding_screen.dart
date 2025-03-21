@@ -57,7 +57,7 @@ Widget getOnBoardingScreen(BuildContext context, Size size) {
                         child: GestureDetector(
                             onTap: () {
                               Navigator.pushReplacementNamed(
-                                  context, AppRoutes.home);
+                                  context, AppRoutes.login);
                             },
                             child: _buildGetStartedButton(context))),
                     SizedBox(height: 20.h),
@@ -208,7 +208,7 @@ Widget _buildGetStartedButton(BuildContext context) {
                 },
                 onHorizontalDragEnd: (_) {
                   context.read<GetStartedCubit>().checkNavigation(() {
-                    Navigator.pushReplacementNamed(context, AppRoutes.home);
+                    Navigator.pushReplacementNamed(context, AppRoutes.login);
                   });
                 },
                 child: Container(

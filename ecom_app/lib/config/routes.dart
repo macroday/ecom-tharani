@@ -4,6 +4,7 @@ import 'package:ecom_app/features/cart/cart_pages/ecom_cart_screen.dart';
 import 'package:ecom_app/features/checkOut/check_out_bloc/check_out_model.dart';
 import 'package:ecom_app/features/checkOut/check_out_pages/check_out_screen.dart';
 import 'package:ecom_app/features/home/home_pages/ecom_home_screen.dart';
+import 'package:ecom_app/features/login/login_pages/ecomm_login_screen.dart';
 import 'package:ecom_app/features/notification/notification_screen.dart';
 import 'package:ecom_app/features/onBoarding/onBoarding_pages/on_boarding_screen.dart';
 import 'package:ecom_app/features/product/product_detail_pages/product_detail_screen.dart';
@@ -18,6 +19,7 @@ class AppRoutes {
   static const String cart = EcomConstants.ecomCartPath;
   static const String checkOut = EcomConstants.checkOutPath;
   static const String notifications = EcomConstants.notificationPath;
+  static const String login = EcomConstants.loginPath;
   static Route<dynamic> navigateToRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case onBoarding:
@@ -40,6 +42,8 @@ class AppRoutes {
                 ));
       case notifications:
         return MaterialPageRoute(builder: (_) => const NotificationScreen());
+      case login:
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
       default:
         return MaterialPageRoute(
             builder: (_) => const Scaffold(
